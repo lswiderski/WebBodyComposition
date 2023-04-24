@@ -1,3 +1,20 @@
+
+let scan;
+
+const computeData = (data) => {
+    const buffer = new Uint8Array(data.buffer)
+    const ctrlByte1 = buffer[1]
+    const stabilized = ctrlByte1 & (1 << 5)
+    const weight = ((buffer[12] << 8) + buffer[11]) / 200
+    const impedance = (buffer[10] << 8) + buffer[9]
+
+    console.log('Impedance: ' + impedance);
+    console.log('weight: ' + weight);
+    if (impedance > 0 && impedance < 3000 && stabilized) {
+        scan.stop()
+    }
+}
+
 export default async function onScan() {
     let filters = [];
 
@@ -20,7 +37,7 @@ export default async function onScan() {
 
     try {
         console.log('Requesting Bluetooth Scan with options: ' + JSON.stringify(options));
-        const scan = await navigator.bluetooth.requestLEScan(options);
+        scan = await navigator.bluetooth.requestLEScan(options);
 
         console.log('Scan started with:');
         console.log(' acceptAllAdvertisements: ' + scan.acceptAllAdvertisements);
@@ -36,10 +53,11 @@ export default async function onScan() {
             console.log('  TX Power: ' + event.txPower);
             console.log('  UUIDs: ' + event.uuids);
             event.manufacturerData.forEach((valueDataView, key) => {
-                logDataView('Manufacturer', key, valueDataView);
+                console.log('Manufacturer: ' + key + ' - ' + valueDataView);
             });
             event.serviceData.forEach((valueDataView, key) => {
-                logDataView('Service', key, valueDataView);
+                console.log('Service: ' + key + ' - ' + valueDataView);
+                computeData(valueDataView);
             });
         });
         debugger;
