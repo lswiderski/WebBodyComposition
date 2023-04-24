@@ -1,10 +1,8 @@
-import onScan from '../../services/webscan'
+import Scanner from '../../components/Scanner'
+import { useBodyCompositionContext } from '../../contexts/bodycomposition.context';
 export default function Xiaomi() {
+    const { bodyComposition } = useBodyCompositionContext();
 
-    async function handleScan() {
-        await onScan();
-
-    }
 
     return (
         <div>
@@ -17,7 +15,7 @@ export default function Xiaomi() {
                     <li>https://googlechrome.github.io/samples/web-bluetooth/scan.html</li>
                     <li> https://github.com/GoogleChrome/samples/tree/gh-pages/web-bluetooth</li></ul>
 
-
+                <p> value is {bodyComposition.weight} </p>
                 <p>This sample illustrates basic use of the Web Bluetooth Scanning API to
                     report advertising packets from nearby Bluetooth Low Energy Devices.</p>
 
@@ -25,14 +23,8 @@ export default function Xiaomi() {
                     with the <code>chrome://flags/#enable-experimental-web-platform-features</code>&nbsp;
                     flag enabled.</p>
             </div>
+            <Scanner></Scanner>
 
-            <div>
-                <label for="allAdvertisements">All Advertisements</label>
-                <input id="allAdvertisements" type="checkbox" />
-                <input id="name" type="text" size="17" placeholder="Device Name" />
-                <input id="namePrefix" type="text" size="17" placeholder="Device Name Prefix" />
-                <button onClick={handleScan}>Scan for Bluetooth Advertisements</button>
-            </div>
 
 
         </div>)
