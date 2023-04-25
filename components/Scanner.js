@@ -136,13 +136,13 @@ export default function Scanner() {
 
     async function onWatchAdvertisementsButtonClick() {
         try {
-            log('Requesting any Bluetooth device...');
+            console.log('Requesting any Bluetooth device...');
             const device = await navigator.bluetooth.requestDevice({
                 // filters: [...] <- Prefer filters to save energy & show relevant devices.
                 acceptAllDevices: true
             });
 
-            log('> Requested ' + device.name);
+            console.log('> Requested ' + device.name);
 
             device.addEventListener('advertisementreceived', (event) => {
                 console.log('Advertisement received.');
@@ -161,10 +161,10 @@ export default function Scanner() {
                 console.log(event);
             });
 
-            log('Watching advertisements from "' + device.name + '"...');
+            console.log('Watching advertisements from "' + device.name + '"...');
             await device.watchAdvertisements();
         } catch (error) {
-            log('Argh! ' + error);
+            console.log('Argh! ' + error);
         }
     }
 
