@@ -12,6 +12,7 @@ export default function Scanner() {
             // These devices may not be powered on or in range, so scan for
             // advertisement packets from them before connecting.
             for (const device of devices) {
+                console.log(device);
                 connectToBluetoothDevice(device);
             }
         }
@@ -28,9 +29,11 @@ export default function Scanner() {
             // Stop watching advertisements to conserve battery life.
             abortController.abort();
             console.log('Connecting to GATT Server from "' + device.name + '"...');
-            debugger;
+            console.log(device);
+            console.log(event);
             try {
-                await device.gatt.connect()
+                await device.gatt.connect();
+                console.log(device);
                 debugger;
                 console.log('> Bluetooth device "' + device.name + ' connected.');
             }
