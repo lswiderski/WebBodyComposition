@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useBodyCompositionContext } from '../contexts/bodycomposition.context';
+import { useNotificationsContext } from '../contexts/notifications.context';
 
 export default function Scanner() {
     const { bodyComposition, setBodyComposition } = useBodyCompositionContext();
-    const { status, setStatus } = useState('-');
+    const { notification, setNotification } = useNotificationsContext();
 
     var myCharacteristic;
 
@@ -19,27 +20,43 @@ export default function Scanner() {
         }
 
         try {
-            setStatus('Requesting Bluetooth Device...');
+            setNotification({
+                ...notification,
+                status: 'Requesting Bluetooth Device...'
+            });
+
             const device = await navigator.bluetooth.requestDevice({
                 filters: [{ services: [serviceUuid] }]
             });
-
-            setStatus('Connecting to GATT Server...');
+            setNotification({
+                ...notification,
+                status: 'Connecting to GATT Server...'
+            });
             const server = await device.gatt.connect();
-
-            setStatus('Getting Service...');
+            setNotification({
+                ...notification,
+                status: 'Getting Service....'
+            });
             const service = await server.getPrimaryService(serviceUuid);
-
-            setStatus('Getting Characteristic...');
+            setNotification({
+                ...notification,
+                status: 'Getting Characteristic...'
+            });
             myCharacteristic = await service.getCharacteristic(characteristicUuid);
 
             await myCharacteristic.startNotifications();
-
-            setStatus('> Notifications started');
+            setNotification({
+                ...notification,
+                status: '> Notifications started'
+            });
             myCharacteristic.addEventListener('characteristicvaluechanged',
                 handleNotifications);
         } catch (error) {
-            setStatus('Argh! ' + error);
+            console.log('Argh! ' + error);
+            setNotification({
+                ...notification,
+                status: 'Argh! ' + error
+            });
         }
     }
 
@@ -47,18 +64,29 @@ export default function Scanner() {
         if (myCharacteristic) {
             try {
                 await myCharacteristic.stopNotifications();
-                setStatus('> Notifications stopped');
+                setNotification({
+                    ...notification,
+                    status: '> Notifications stopped'
+                });
                 myCharacteristic.removeEventListener('characteristicvaluechanged',
                     handleNotifications);
             } catch (error) {
-                setStatus('Argh! ' + error);
+                console.log('Argh! ' + error);
+                setNotification({
+                    ...notification,
+                    status: 'Argh! ' + error
+                });
             }
         }
     }
 
     function handleNotifications(event) {
         let value = event.target.value;
-        setStatus(new TextDecoder().decode(new Uint8Array(value)))
+        let notification = new Uint8Array(value.buffer).toString();
+        setNotification({
+            ...notification,
+            status: notification
+        });
         computeData(value);
     }
 
@@ -73,10 +101,10 @@ export default function Scanner() {
         console.log('weight: ' + weight);
         setBodyComposition({
             ...bodyComposition,
-            weight: weight
+            weight: weight,
+            impedance: impedance
         })
         if (impedance > 0 && impedance < 3000 && stabilized) {
-            scan.stop()
         }
     }
 
@@ -86,7 +114,7 @@ export default function Scanner() {
             <button onClick={onStartButtonClick}>Start </button>
 
             <button onClick={onStopButtonClick}>Stop</button>
-            status: {status}
+            status: {notification.status}
         </div>
     )
 

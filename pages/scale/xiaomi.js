@@ -15,7 +15,7 @@ export default function Xiaomi() {
                     <li>https://googlechrome.github.io/samples/web-bluetooth/scan.html</li>
                     <li> https://github.com/GoogleChrome/samples/tree/gh-pages/web-bluetooth</li></ul>
 
-                <p> value is {bodyComposition.weight} </p>
+
                 <p>This sample illustrates basic use of the Web Bluetooth Scanning API to
                     report advertising packets from nearby Bluetooth Low Energy Devices.</p>
 
@@ -23,6 +23,9 @@ export default function Xiaomi() {
                     with the <code>chrome://flags/#enable-experimental-web-platform-features</code>&nbsp;
                     flag enabled.</p>
             </div>
+
+            <p> Weight: {bodyComposition.weight} </p>
+            <p> Impedance: {bodyComposition.impedance} </p>
             <Scanner></Scanner>
 
 
