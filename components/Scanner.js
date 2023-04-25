@@ -3,8 +3,64 @@ import { useBodyCompositionContext } from '../contexts/bodycomposition.context';
 export default function Scanner() {
     const { bodyComposition, setBodyComposition } = useBodyCompositionContext();
 
-    async function handleScan() {
-        await onScan();
+    async function handleConnect() {
+        try {
+            console.log('Getting existing permitted Bluetooth devices...');
+            const devices = await navigator.bluetooth.getDevices();
+            debugger;
+            console.log('> Got ' + devices.length + ' Bluetooth devices.');
+            // These devices may not be powered on or in range, so scan for
+            // advertisement packets from them before connecting.
+            for (const device of devices) {
+                connectToBluetoothDevice(device);
+            }
+        }
+        catch (error) {
+            console.log('Argh! ' + error);
+        }
+    }
+
+    async function connectToBluetoothDevice(device) {
+        const abortController = new AbortController();
+
+        device.addEventListener('advertisementreceived', async (event) => {
+            console.log('> Received advertisement from "' + device.name + '"...');
+            // Stop watching advertisements to conserve battery life.
+            abortController.abort();
+            log('Connecting to GATT Server from "' + device.name + '"...');
+            debugger;
+            try {
+                await device.gatt.connect()
+                debugger;
+                console.log('> Bluetooth device "' + device.name + ' connected.');
+            }
+            catch (error) {
+                console.log('Argh! ' + error);
+            }
+        }, { once: true });
+
+        try {
+            console.log('Watching advertisements from "' + device.name + '"...');
+            await device.watchAdvertisements({ signal: abortController.signal });
+        }
+        catch (error) {
+            console.log('Argh! ' + error);
+        }
+    }
+
+    async function handleRequestDevice() {
+        try {
+            console.log('Requesting any Bluetooth device...');
+            const device = await navigator.bluetooth.requestDevice({
+                // filters: [...] <- Prefer filters to save energy & show relevant devices.
+                acceptAllDevices: true
+            });
+
+            console.log('> Requested ' + device.name);
+        }
+        catch (error) {
+            console.log('Argh! ' + error);
+        }
 
     }
 
@@ -91,7 +147,8 @@ export default function Scanner() {
     return (
 
         <div>
-            <button onClick={handleScan}>Scan for Bluetooth Advertisements</button>
+            <button onClick={handleConnect}>Get data</button>
+            <button onClick={handleRequestDevice}>Pair with scale</button>
         </div>
     )
 
