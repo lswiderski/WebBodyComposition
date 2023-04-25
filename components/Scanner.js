@@ -172,7 +172,7 @@ export default function Scanner() {
     return (
 
         <div>
-            <button onClick={handleConnect}>Get data</button>
+            <button onClick={onScan}>Get data</button>
             <button onClick={handleRequestDevice}>Pair with scale</button>
 
             <button onClick={onWatchAdvertisementsButtonClick}>Watch Advertisements</button>
