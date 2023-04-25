@@ -134,24 +134,48 @@ export default function Scanner() {
         }
     }
 
-    /* Utils */
+    async function onWatchAdvertisementsButtonClick() {
+        try {
+            log('Requesting any Bluetooth device...');
+            const device = await navigator.bluetooth.requestDevice({
+                // filters: [...] <- Prefer filters to save energy & show relevant devices.
+                acceptAllDevices: true
+            });
 
-    const logDataView = (labelOfDataSource, key, valueDataView) => {
-        const hexString = [...new Uint8Array(valueDataView.buffer)].map(b => {
-            return b.toString(16).padStart(2, '0');
-        }).join(' ');
-        const textDecoder = new TextDecoder('ascii');
-        const asciiString = textDecoder.decode(valueDataView.buffer);
-        log(`  ${labelOfDataSource} Data: ` + key +
-            '\n    (Hex) ' + hexString +
-            '\n    (ASCII) ' + asciiString);
-    };
+            log('> Requested ' + device.name);
+
+            device.addEventListener('advertisementreceived', (event) => {
+                console.log('Advertisement received.');
+                console.log('  Device Name: ' + event.device.name);
+                console.log('  Device ID: ' + event.device.id);
+                console.log('  RSSI: ' + event.rssi);
+                console.log('  TX Power: ' + event.txPower);
+                console.log('  UUIDs: ' + event.uuids);
+                event.manufacturerData.forEach((valueDataView, key) => {
+                    console.log('Manufacturer ' + key + ' - ' + valueDataView);
+                });
+                event.serviceData.forEach((valueDataView, key) => {
+                    console.log('Service', + key + ' - ' + valueDataView);
+                    computeData(valueDataView);
+                });
+                console.log(event);
+            });
+
+            log('Watching advertisements from "' + device.name + '"...');
+            await device.watchAdvertisements();
+        } catch (error) {
+            log('Argh! ' + error);
+        }
+    }
+
 
     return (
 
         <div>
             <button onClick={handleConnect}>Get data</button>
             <button onClick={handleRequestDevice}>Pair with scale</button>
+
+            <button onClick={onWatchAdvertisementsButtonClick}>Watch Advertisements</button>
         </div>
     )
 
