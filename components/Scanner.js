@@ -3,68 +3,71 @@ import { useBodyCompositionContext } from '../contexts/bodycomposition.context';
 export default function Scanner() {
     const { bodyComposition, setBodyComposition } = useBodyCompositionContext();
 
-    async function handleConnect() {
-        try {
-            console.log('Getting existing permitted Bluetooth devices...');
-            const devices = await navigator.bluetooth.getDevices();
-            debugger;
-            console.log('> Got ' + devices.length + ' Bluetooth devices.');
-            // These devices may not be powered on or in range, so scan for
-            // advertisement packets from them before connecting.
-            for (const device of devices) {
-                console.log(device);
-                connectToBluetoothDevice(device);
-            }
-        }
-        catch (error) {
-            console.log('Argh! ' + error);
-        }
-    }
 
-    async function connectToBluetoothDevice(device) {
-        const abortController = new AbortController();
 
-        device.addEventListener('advertisementreceived', async (event) => {
-            console.log('> Received advertisement from "' + device.name + '"...');
-            // Stop watching advertisements to conserve battery life.
-            abortController.abort();
-            console.log('Connecting to GATT Server from "' + device.name + '"...');
-            console.log(device);
-            console.log(event);
-            try {
-                await device.gatt.connect();
-                console.log(device);
-                debugger;
-                console.log('> Bluetooth device "' + device.name + ' connected.');
-            }
-            catch (error) {
-                console.log('Argh! ' + error);
-            }
-        }, { once: true });
+    var myCharacteristic;
+
+    async function onStartButtonClick() {
+        let serviceUuid = 'body_composition';
+        if (serviceUuid.startsWith('0x')) {
+            serviceUuid = parseInt(serviceUuid);
+        }
+
+        let characteristicUuid = 'body_composition_measurement';
+        if (characteristicUuid.startsWith('0x')) {
+            characteristicUuid = parseInt(characteristicUuid);
+        }
 
         try {
-            console.log('Watching advertisements from "' + device.name + '"...');
-            await device.watchAdvertisements({ signal: abortController.signal });
-        }
-        catch (error) {
-            console.log('Argh! ' + error);
-        }
-    }
-
-    async function handleRequestDevice() {
-        try {
-            console.log('Requesting any Bluetooth device...');
+            console.log('Requesting Bluetooth Device...');
             const device = await navigator.bluetooth.requestDevice({
-                // filters: [...] <- Prefer filters to save energy & show relevant devices.
-                acceptAllDevices: true
+                filters: [{ services: [serviceUuid] }]
             });
 
-            console.log('> Requested ' + device.name);
-        }
-        catch (error) {
+            console.log('Connecting to GATT Server...');
+            const server = await device.gatt.connect();
+
+            console.log('Getting Service...');
+            const service = await server.getPrimaryService(serviceUuid);
+
+            console.log('Getting Characteristic...');
+            myCharacteristic = await service.getCharacteristic(characteristicUuid);
+
+            await myCharacteristic.startNotifications();
+
+            console.log('> Notifications started');
+            myCharacteristic.addEventListener('characteristicvaluechanged',
+                handleNotifications);
+        } catch (error) {
             console.log('Argh! ' + error);
         }
+    }
 
+    async function onStopButtonClick() {
+        if (myCharacteristic) {
+            try {
+                await myCharacteristic.stopNotifications();
+                console.log('> Notifications stopped');
+                myCharacteristic.removeEventListener('characteristicvaluechanged',
+                    handleNotifications);
+            } catch (error) {
+                console.log('Argh! ' + error);
+            }
+        }
+    }
+
+    function handleNotifications(event) {
+        let value = event.target.value;
+        let a = [];
+        // Convert raw data bytes to hex values just for the sake of showing something.
+        // In the "real" world, you'd use data.getUint8, data.getUint16 or even
+        // TextDecoder to process raw data bytes.
+        console.log(value);
+        computeData(valueDataView);
+        for (let i = 0; i < value.byteLength; i++) {
+            a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
+        }
+        console.log('> ' + a.join(' '));
     }
 
     let scan;
@@ -134,48 +137,15 @@ export default function Scanner() {
         }
     }
 
-    async function onWatchAdvertisementsButtonClick() {
-        try {
-            console.log('Requesting any Bluetooth device...');
-            const device = await navigator.bluetooth.requestDevice({
-                // filters: [...] <- Prefer filters to save energy & show relevant devices.
-                acceptAllDevices: true
-            });
-
-            console.log('> Requested ' + device.name);
-
-            device.addEventListener('advertisementreceived', (event) => {
-                console.log('Advertisement received.');
-                console.log('  Device Name: ' + event.device.name);
-                console.log('  Device ID: ' + event.device.id);
-                console.log('  RSSI: ' + event.rssi);
-                console.log('  TX Power: ' + event.txPower);
-                console.log('  UUIDs: ' + event.uuids);
-                event.manufacturerData.forEach((valueDataView, key) => {
-                    console.log('Manufacturer ' + key + ' - ' + valueDataView);
-                });
-                event.serviceData.forEach((valueDataView, key) => {
-                    console.log('Service', + key + ' - ' + valueDataView);
-                    computeData(valueDataView);
-                });
-                console.log(event);
-            });
-
-            console.log('Watching advertisements from "' + device.name + '"...');
-            await device.watchAdvertisements();
-        } catch (error) {
-            console.log('Argh! ' + error);
-        }
-    }
 
 
     return (
 
         <div>
             <button onClick={onScan}>Get data</button>
-            <button onClick={handleRequestDevice}>Pair with scale</button>
+            <button onClick={onStartButtonClick}>Start </button>
 
-            <button onClick={onWatchAdvertisementsButtonClick}>Watch Advertisements</button>
+            <button onClick={onStopButtonClick}>Stop</button>
         </div>
     )
 
