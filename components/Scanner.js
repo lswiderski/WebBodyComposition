@@ -1,9 +1,9 @@
+import { useState } from 'react'
 import { useBodyCompositionContext } from '../contexts/bodycomposition.context';
 
 export default function Scanner() {
     const { bodyComposition, setBodyComposition } = useBodyCompositionContext();
-
-
+    const { status, setStatus } = useState('-');
 
     var myCharacteristic;
 
@@ -19,27 +19,27 @@ export default function Scanner() {
         }
 
         try {
-            console.log('Requesting Bluetooth Device...');
+            setStatus('Requesting Bluetooth Device...');
             const device = await navigator.bluetooth.requestDevice({
                 filters: [{ services: [serviceUuid] }]
             });
 
-            console.log('Connecting to GATT Server...');
+            setStatus('Connecting to GATT Server...');
             const server = await device.gatt.connect();
 
-            console.log('Getting Service...');
+            setStatus('Getting Service...');
             const service = await server.getPrimaryService(serviceUuid);
 
-            console.log('Getting Characteristic...');
+            setStatus('Getting Characteristic...');
             myCharacteristic = await service.getCharacteristic(characteristicUuid);
 
             await myCharacteristic.startNotifications();
 
-            console.log('> Notifications started');
+            setStatus('> Notifications started');
             myCharacteristic.addEventListener('characteristicvaluechanged',
                 handleNotifications);
         } catch (error) {
-            console.log('Argh! ' + error);
+            setStatus('Argh! ' + error);
         }
     }
 
@@ -47,30 +47,20 @@ export default function Scanner() {
         if (myCharacteristic) {
             try {
                 await myCharacteristic.stopNotifications();
-                console.log('> Notifications stopped');
+                setStatus('> Notifications stopped');
                 myCharacteristic.removeEventListener('characteristicvaluechanged',
                     handleNotifications);
             } catch (error) {
-                console.log('Argh! ' + error);
+                setStatus('Argh! ' + error);
             }
         }
     }
 
     function handleNotifications(event) {
         let value = event.target.value;
-        let a = [];
-        // Convert raw data bytes to hex values just for the sake of showing something.
-        // In the "real" world, you'd use data.getUint8, data.getUint16 or even
-        // TextDecoder to process raw data bytes.
-        console.log(new Uint8Array(value));
+        setStatus(new TextDecoder().decode(new Uint8Array(value)))
         computeData(value);
-        for (let i = 0; i < value.byteLength; i++) {
-            a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
-        }
-        console.log('> ' + a.join(' '));
     }
-
-    let scan;
 
     const computeData = (data) => {
         const buffer = new Uint8Array(data.buffer)
@@ -90,62 +80,13 @@ export default function Scanner() {
         }
     }
 
-    async function onScan() {
-        let filters = [];
-
-        let filterName = 'MIBCS'
-        filters.push({ name: filterName });
-
-        let options = {};
-        options.filters = filters;
-
-        try {
-            console.log('Requesting Bluetooth Scan with options: ' + JSON.stringify(options));
-            scan = await navigator.bluetooth.requestLEScan(options);
-
-            console.log('Scan started with:');
-            console.log(' acceptAllAdvertisements: ' + scan.acceptAllAdvertisements);
-            console.log(' active: ' + scan.active);
-            console.log(' keepRepeatedDevices: ' + scan.keepRepeatedDevices);
-            console.log(' filters: ' + JSON.stringify(scan.filters));
-
-            navigator.bluetooth.addEventListener('advertisementreceived', event => {
-                console.log('Advertisement received.');
-                console.log('  Device Name: ' + event.device.name);
-                console.log('  Device ID: ' + event.device.id);
-                console.log('  RSSI: ' + event.rssi);
-                console.log('  TX Power: ' + event.txPower);
-                console.log('  UUIDs: ' + event.uuids);
-                event.manufacturerData.forEach((valueDataView, key) => {
-                    console.log('Manufacturer: ' + key + ' - ' + valueDataView);
-                });
-                event.serviceData.forEach((valueDataView, key) => {
-                    console.log('Service: ' + key + ' - ' + valueDataView);
-                    computeData(valueDataView);
-                });
-            });
-            debugger;
-            setTimeout(stopScan, 10000);
-            function stopScan() {
-                console.log('Stopping scan...');
-                scan.stop();
-                console.log('Stopped.  scan.active = ' + scan.active);
-            }
-        } catch (error) {
-            debugger;
-            console.log('Argh! ' + error);
-        }
-    }
-
-
-
     return (
 
         <div>
-            <button onClick={onScan}>Get data</button>
             <button onClick={onStartButtonClick}>Start </button>
 
             <button onClick={onStopButtonClick}>Stop</button>
+            status: {status}
         </div>
     )
 
