@@ -27,7 +27,7 @@ export default function Scanner() {
             console.log('> Received advertisement from "' + device.name + '"...');
             // Stop watching advertisements to conserve battery life.
             abortController.abort();
-            log('Connecting to GATT Server from "' + device.name + '"...');
+            console.log('Connecting to GATT Server from "' + device.name + '"...');
             debugger;
             try {
                 await device.gatt.connect()
