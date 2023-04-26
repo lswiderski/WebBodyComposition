@@ -26,6 +26,16 @@ export default function Xiaomi() {
 
             <p> Weight: {bodyComposition.weight} </p>
             <p> Impedance: {bodyComposition.impedance} </p>
+            <p> bmi: {bodyComposition.bmi} </p>
+            <p> ideal Weight: {bodyComposition.idealWeight} </p>
+            <p> metabolic Age: {bodyComposition.metabolicAge} </p>
+            <p> protein Percentage: {bodyComposition.proteinPercentage} </p>
+            <p> lbm Coefficient: {bodyComposition.lbmCoefficient} </p>
+            <p> mbr: {bodyComposition.mbr} </p>
+            <p> fat: {bodyComposition.fat} </p>
+            <p> muscle Mass: {bodyComposition.muscleMass} </p>
+            <p> bone Mass: {bodyComposition.boneMass} </p>
+            <p> visceral Fat: {bodyComposition.visceralFat} </p>
             <Scanner></Scanner>
 
 
