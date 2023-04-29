@@ -20,16 +20,16 @@ export default function Garmin() {
 
         const payload =
         {
-            timeStamp: Date.now(),
-            weight: weight,
-            percentFat: 0,//fat ?? null,
-            percentHydration: 0,//waterPercentage ?? null,
-            boneMass: 0,//boneMass ?? null,
-            muscleMass: 0,//muscleMass ?? null,
-            visceralFatRating: 0,//visceralFat ?? null,
+            timeStamp: -1,
+            weight: parseFloat(weight),
+            percentFat: parseFloat(0),//fat ?? null,
+            percentHydration: parseFloat(0),//waterPercentage ?? null,
+            boneMass: parseFloat(0),//boneMass ?? null,
+            muscleMass: parseFloat(0),//muscleMass ?? null,
+            visceralFatRating: parseFloat(0),//visceralFat ?? null,
             //physiqueRating: event.target.weight.value?? null,
-            metabolicAge: 0,//metabolicAge ?? null,
-            bodyMassIndex: 0,//bmi ?? null,
+            metabolicAge: parseFloat(0),//metabolicAge ?? null,
+            bodyMassIndex: parseFloat(0),//bmi ?? null,
             email,
             password,
         }
@@ -67,49 +67,49 @@ export default function Garmin() {
                 <form onSubmit={submitGarminForm}>
                     <div className="input">
                         <label>Weight (Kg)</label>
-                        <input name="weight" type="number" required
+                        <input name="weight" type="number" step="0.01" required
                             value={weight}
                             onChange={(e) => setWeight(e.target.value)} />
                     </div>
                     <div className="input">
                         <label>BMI</label>
-                        <input name="bmi" type="number"
+                        <input name="bmi" type="number" step="0.01"
                             value={bmi}
                             onChange={(e) => setBmi(e.target.value)} />
                     </div>
                     <div className="input">
                         <label>Body Fat (%)</label>
-                        <input name="fat" type="number"
+                        <input name="fat" type="number" step="0.01"
                             value={fat}
                             onChange={(e) => setFat(e.target.value)} />
                     </div>
                     <div className="input">
                         <label>Muscle Mass (kg)</label>
-                        <input name="muscleMass" type="number"
+                        <input name="muscleMass" type="number" step="0.01"
                             value={muscleMass}
                             onChange={(e) => setMuscleMass(e.target.value)} />
                     </div>
                     <div className="input">
                         <label>Water (%)</label>
-                        <input name="waterPercentage" type="number"
+                        <input name="waterPercentage" type="number" step="0.01"
                             value={waterPercentage}
                             onChange={(e) => setWaterPercentage(e.target.value)} />
                     </div>
                     <div className="input">
                         <label>Bone Mass (Kg)</label>
-                        <input name="boneMass" type="number"
+                        <input name="boneMass" type="number" step="0.01"
                             value={boneMass}
                             onChange={(e) => setBoneMass(e.target.value)} />
                     </div>
                     <div className="input">
                         <label>Visceral Fat</label>
-                        <input name="visceralFat" type="number"
+                        <input name="visceralFat" type="number" step="0.01"
                             value={visceralFat}
                             onChange={(e) => setVisceralFat(e.target.value)} />
                     </div>
                     <div className="input">
                         <label>Body age (years)</label>
-                        <input name="metabolicAge" type="number"
+                        <input name="metabolicAge" type="number" step="0.01"
                             value={metabolicAge}
                             onChange={(e) => setMetabolicAge(e.target.value)} />
                     </div>
