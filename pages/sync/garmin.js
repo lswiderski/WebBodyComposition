@@ -22,39 +22,34 @@ export default function Garmin() {
         {
             timeStamp: Date.now(),
             weight: weight,
-            //percentFat: fat ?? null,
-            //percentHydration: waterPercentage ?? null,
-            //boneMass: boneMass ?? null,
-            //muscleMass: muscleMass ?? null,
-            //visceralFatRating: visceralFat ?? null,
-            ////physiqueRating: event.target.weight.value?? null,
-            //metabolicAge: metabolicAge ?? null,
-            //bodyMassIndex: bmi ?? null,
+            percentFat: 0,//fat ?? null,
+            percentHydration: 0,//waterPercentage ?? null,
+            boneMass: 0,//boneMass ?? null,
+            muscleMass: 0,//muscleMass ?? null,
+            visceralFatRating: 0,//visceralFat ?? null,
+            //physiqueRating: event.target.weight.value?? null,
+            metabolicAge: 0,//metabolicAge ?? null,
+            bodyMassIndex: 0,//bmi ?? null,
             email,
             password,
         }
 
         debugger;
         try {
-
-            /*
-            const res = await fetch('http://localhost:8080/upload', {
-                body: JSON.stringify(payload),
-                mode: 'cors',
+            let axiosConfig = {
                 headers: {
+                    'accept': 'application/json',
                     'Content-Type': 'application/json',
-                },
-                method: 'POST',
-            });
-            debugger
-            const result = await res.json();
-            debugger;
-            console.log(result)*/
+                }
+            };
 
             await axios
-                .post('https://frog01-20364.wykr.es/upload', payload)
+                .post('https://frog01-20364.wykr.es/upload', payload, axiosConfig)
                 .then(response => {
                     console.log(response);
+                })
+                .catch(error => {
+                    console.log(error);
                 });
 
         }
