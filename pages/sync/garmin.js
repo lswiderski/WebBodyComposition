@@ -52,7 +52,7 @@ export default function Garmin() {
             console.log(result)*/
 
             await axios
-                .post('https://frog01-20364.wykr.es//upload', payload)
+                .post('https://frog01-20364.wykr.es/upload', payload)
                 .then(response => {
                     console.log(response);
                 });
