@@ -21,7 +21,8 @@ export default class Metrics {
             fat: { name: 'Fat', value: this.getFatPercentage() },
             muscleMass: { name: 'Muscle Mass', value: this.getMuscleMass() },
             boneMass: { name: 'Bone Mass', value: this.getBoneMass() },
-            visceralFat: { name: 'Visceral Fat', value: this.getVisceralFat() }
+            visceralFat: { name: 'Visceral Fat', value: this.getVisceralFat() },
+            waterPercentage: { name: 'Water Percentage', value: this.getWaterPercentage() },
         }
 
         return bodyComposition;

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import { useBodyCompositionContext } from '../contexts/bodycomposition.context';
 import { useNotificationsContext } from '../contexts/notifications.context';
 import Metrics from '@/services/metrics';
@@ -6,6 +7,7 @@ import Metrics from '@/services/metrics';
 export default function Scanner() {
     const { bodyComposition, setBodyComposition } = useBodyCompositionContext();
     const { notification, setNotification } = useNotificationsContext();
+    const router = useRouter();
     const [age, setAge] = useState(25);
     const [height, setHeight] = useState(180);
     const [gender, setGender] = useState('male');
@@ -125,7 +127,8 @@ export default function Scanner() {
                 fat,
                 muscleMass,
                 boneMass,
-                visceralFat } = metrics.getResult();
+                visceralFat,
+                waterPercentage } = metrics.getResult();
 
             setBodyComposition({
                 ...bodyComposition,
@@ -141,6 +144,7 @@ export default function Scanner() {
                 muscleMass: muscleMass.value.toFixed(2),
                 boneMass: boneMass.value.toFixed(2),
                 visceralFat: visceralFat.value.toFixed(2),
+                waterPercentage: waterPercentage.value.toFixed(2),
             });
 
             await stopScan();
@@ -177,6 +181,9 @@ export default function Scanner() {
             <button onClick={onStartButtonClick}>Start </button>
 
             <button onClick={onStopButtonClick}>Stop</button>
+            <button onClick={() => {
+                router.push('/sync/garmin')
+            }}>Go To Garmin Form</button>
             status: {notification.status}
         </div>
     )
