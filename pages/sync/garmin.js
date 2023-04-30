@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Link from 'next/link'
 import axios from 'axios';
 import { useBodyCompositionContext } from '../../contexts/bodycomposition.context';
 
@@ -60,84 +61,260 @@ export default function Garmin() {
     };
 
     return (
-        <div>
-            <h1>Garmin Body Composition Form</h1>
-            <div>
-                <form onSubmit={submitGarminForm}>
-                    <div className="input">
-                        <label>Weight (Kg)</label>
-                        <input name="weight" type="number" step="0.01" required
+        <div className='flex flex-wrap'>
+            <div className='w-full max-w-lg ml-auto mr-auto'>
+                <h1 className='text-3xl font-bold text-center mb-5'> Garmin Body Composition Form</h1>
+                <form onSubmit={submitGarminForm}
+                    className=''>
+                    <label className="block">
+                        <span className="text-gray-700">Weight (Kg)</span>
+                        <input
+                            type="number"
+                            name="weight"
+                            step="0.01"
+                            min={0}
                             value={weight}
-                            onChange={(e) => setWeight(e.target.value)} />
-                    </div>
-                    <div className="input">
-                        <label>BMI</label>
-                        <input name="bmi" type="number" step="0.01"
+                            onChange={(e) => setWeight(e.target.value)}
+                            className="
+                            mt-1
+                            block
+                            w-full
+                            rounded-md
+                            border-gray-300
+                            shadow-sm
+                            focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                          "
+                            placeholder=""
+                        />
+                    </label>
+                    <label className="block">
+                        <span className="text-gray-700">BMI</span>
+                        <input
+                            type="number"
+                            name="bmi"
+                            step="0.01"
+                            min={0}
                             value={bmi}
-                            onChange={(e) => setBmi(e.target.value)} />
-                    </div>
-                    <div className="input">
-                        <label>Body Fat (%)</label>
-                        <input name="fat" type="number" step="0.01"
+                            onChange={(e) => setBmi(e.target.value)}
+                            className="
+                            mt-1
+                            block
+                            w-full
+                            rounded-md
+                            border-gray-300
+                            shadow-sm
+                            focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                          "
+                            placeholder=""
+                        />
+                    </label>
+                    <label className="block">
+                        <span className="text-gray-700">Body Fat (%)</span>
+                        <input
+                            type="number"
+                            name="fat"
+                            step="0.01"
+                            min={0}
                             value={fat}
-                            onChange={(e) => setFat(e.target.value)} />
-                    </div>
-                    <div className="input">
-                        <label>Muscle Mass (kg)</label>
-                        <input name="muscleMass" type="number" step="0.01"
+                            onChange={(e) => setFat(e.target.value)}
+                            className="
+                            mt-1
+                            block
+                            w-full
+                            rounded-md
+                            border-gray-300
+                            shadow-sm
+                            focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                          "
+                            placeholder=""
+                        />
+                    </label>
+                    <label className="block">
+                        <span className="text-gray-700">Muscle Mass (kg)</span>
+                        <input
+                            type="number"
+                            name="muscleMass"
+                            step="0.01"
+                            min={0}
                             value={muscleMass}
-                            onChange={(e) => setMuscleMass(e.target.value)} />
-                    </div>
-                    <div className="input">
-                        <label>Water (%)</label>
-                        <input name="waterPercentage" type="number" step="0.01"
+                            onChange={(e) => setMuscleMass(e.target.value)}
+                            className="
+                            mt-1
+                            block
+                            w-full
+                            rounded-md
+                            border-gray-300
+                            shadow-sm
+                            focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                          "
+                            placeholder=""
+                        />
+                    </label>
+                    <label className="block">
+                        <span className="text-gray-700">Water (%)</span>
+                        <input
+                            type="number"
+                            name="waterPercentage"
+                            step="0.01"
+                            min={0}
                             value={waterPercentage}
-                            onChange={(e) => setWaterPercentage(e.target.value)} />
-                    </div>
-                    <div className="input">
-                        <label>Bone Mass (Kg)</label>
-                        <input name="boneMass" type="number" step="0.01"
+                            onChange={(e) => setWaterPercentage(e.target.value)}
+                            className="
+                            mt-1
+                            block
+                            w-full
+                            rounded-md
+                            border-gray-300
+                            shadow-sm
+                            focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                          "
+                            placeholder=""
+                        />
+                    </label>
+                    <label className="block">
+                        <span className="text-gray-700">Bone Mass (Kg)</span>
+                        <input
+                            type="number"
+                            name="boneMass"
+                            step="0.01"
+                            min={0}
                             value={boneMass}
-                            onChange={(e) => setBoneMass(e.target.value)} />
-                    </div>
-                    <div className="input">
-                        <label>Visceral Fat</label>
-                        <input name="visceralFat" type="number" step="0.01"
+                            onChange={(e) => setBoneMass(e.target.value)}
+                            className="
+                            mt-1
+                            block
+                            w-full
+                            rounded-md
+                            border-gray-300
+                            shadow-sm
+                            focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                          "
+                            placeholder=""
+                        />
+                    </label>
+                    <label className="block">
+                        <span className="text-gray-700">Visceral Fat</span>
+                        <input
+                            type="number"
+                            name="visceralFat"
+                            step="0.01"
+                            min={0}
                             value={visceralFat}
-                            onChange={(e) => setVisceralFat(e.target.value)} />
-                    </div>
-                    <div className="input">
-                        <label>Body age (years)</label>
-                        <input name="metabolicAge" type="number" step="0.01"
+                            onChange={(e) => setVisceralFat(e.target.value)}
+                            className="
+                            mt-1
+                            block
+                            w-full
+                            rounded-md
+                            border-gray-300
+                            shadow-sm
+                            focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                          "
+                            placeholder=""
+                        />
+                    </label>
+                    <label className="block">
+                        <span className="text-gray-700">Body age (years)</span>
+                        <input
+                            type="number"
+                            name="metabolicAge"
+                            step="0.01"
+                            min={0}
                             value={metabolicAge}
-                            onChange={(e) => setMetabolicAge(e.target.value)} />
-                    </div>
-                    <div className="input">
-                        <label>Body Type</label>
-                        <input name="bodyType" type="number"
+                            onChange={(e) => setMetabolicAge(e.target.value)}
+                            className="
+                            mt-1
+                            block
+                            w-full
+                            rounded-md
+                            border-gray-300
+                            shadow-sm
+                            focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                          "
+                            placeholder=""
+                        />
+                    </label>
+
+                    <label className="block">
+                        <span className="text-gray-700">Body tye</span>
+                        <input
+                            type="number"
+                            name="bodyType"
+                            min={0}
                             value={bodyType}
-                            onChange={(e) => setBodyType(e.target.value)} />
-                    </div>
-                    <div className="input">
-                        <label>Email</label>
-                        <input name="email" type="email"
+                            onChange={(e) => setBodyType(e.target.value)}
+                            className="
+                            mt-1
+                            block
+                            w-full
+                            rounded-md
+                            border-gray-300
+                            shadow-sm
+                            focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                          "
+                            placeholder=""
+                        />
+                    </label>
+
+                    <label className="block">
+                        <span className="text-gray-700">Email address</span>
+                        <input
+                            type="email"
+                            name="password"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)} />
-                    </div>
-                    <div className="input">
-                        <label>Password</label>
-                        <input name="password" type="password"
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="
+                        mt-1
+                        block
+                        w-full
+                        rounded-md
+                        border-gray-300
+                        shadow-sm
+                        focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                      "
+                            placeholder="john@example.com"
+                        />
+                    </label>
+                    <label className="block">
+                        <span className="text-gray-700">Password</span>
+                        <input
+                            type="password"
+                            name='password'
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)} />
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="
+                      mt-1
+                      block
+                      w-full
+                      rounded-md
+                      border-gray-300
+                      shadow-sm
+                      focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                    "
+                            placeholder="********"
+                        />
+                    </label>
+                    <div className='flex flex-wrap'>
+                        <Link href="/" passHref>
+                            <button
+                                type="button"
+                                Li
+                                className='bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded mt-5 mr-auto'
+                            >  &lt; Back
+                            </button>
+                        </Link>
+                        <button
+                            type="submit"
+                            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
+                        > Send to Garmin Connect
+                        </button>
                     </div>
 
-                    <button
-                        type="submit"
-                    > Send to Connect
-                    </button>
 
                 </form>
             </div>
-        </div>
+        </div >
     )
 }
