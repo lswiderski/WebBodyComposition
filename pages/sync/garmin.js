@@ -12,6 +12,7 @@ export default function Garmin() {
     const [boneMass, setBoneMass] = useState(bodyComposition.boneMass);
     const [visceralFat, setVisceralFat] = useState(bodyComposition.visceralFat);
     const [metabolicAge, setMetabolicAge] = useState(bodyComposition.metabolicAge);
+    const [bodyType, setBodyType] = useState(bodyComposition.bodyType);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -22,19 +23,18 @@ export default function Garmin() {
         {
             timeStamp: -1,
             weight: parseFloat(weight),
-            percentFat: parseFloat(0),//fat ?? null,
-            percentHydration: parseFloat(0),//waterPercentage ?? null,
-            boneMass: parseFloat(0),//boneMass ?? null,
-            muscleMass: parseFloat(0),//muscleMass ?? null,
-            visceralFatRating: parseFloat(0),//visceralFat ?? null,
-            //physiqueRating: event.target.weight.value?? null,
-            metabolicAge: parseFloat(0),//metabolicAge ?? null,
-            bodyMassIndex: parseFloat(0),//bmi ?? null,
+            percentFat: parseFloat(fat ?? 0),
+            percentHydration: parseFloat(waterPercentage ?? 0),
+            boneMass: parseFloat(boneMass ?? 0),
+            muscleMass: parseFloat(muscleMass ?? 0),
+            visceralFatRating: parseFloat(visceralFat ?? 0),
+            physiqueRating: parseFloat(bodyType ?? 0),
+            metabolicAge: parseFloat(metabolicAge ?? 0),
+            bodyMassIndex: parseFloat(bmi ?? 0),
             email,
             password,
         }
 
-        debugger;
         try {
             let axiosConfig = {
                 headers: {
@@ -58,7 +58,6 @@ export default function Garmin() {
         }
 
     };
-
 
     return (
         <div>
@@ -112,6 +111,12 @@ export default function Garmin() {
                         <input name="metabolicAge" type="number" step="0.01"
                             value={metabolicAge}
                             onChange={(e) => setMetabolicAge(e.target.value)} />
+                    </div>
+                    <div className="input">
+                        <label>Body Type</label>
+                        <input name="bodyType" type="number"
+                            value={bodyType}
+                            onChange={(e) => setBodyType(e.target.value)} />
                     </div>
                     <div className="input">
                         <label>Email</label>

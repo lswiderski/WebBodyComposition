@@ -23,6 +23,7 @@ export default class Metrics {
             boneMass: { name: 'Bone Mass', value: this.getBoneMass() },
             visceralFat: { name: 'Visceral Fat', value: this.getVisceralFat() },
             waterPercentage: { name: 'Water Percentage', value: this.getWaterPercentage() },
+            bodyType: { name: 'Body Type', value: this.getBodyType() },
         }
 
         return bodyComposition;
@@ -161,5 +162,68 @@ export default class Metrics {
         lbm -= this.impedance * 0.0068
         lbm -= this.age * 0.0542
         return lbm
+    }
+
+    getBodyType = () => {
+
+        let factor;
+        if (this.getFatPercentage() > this.getFatPercentageScale()[2]) {
+            factor = 0;
+        }
+        else if (this.getFatPercentage() < this.getFatPercentageScale()[1]) {
+            factor = 2;
+        }
+        else {
+            factor = 1;
+        }
+
+
+        if (this.getMuscleMass() > this.getMuscleMassScale()[1]) {
+            return 2 + (factor * 3);
+        }
+        else if (this.getMuscleMass() < this.getMuscleMassScale()[0]) {
+            return (factor * 3);
+        }
+        else {
+            return 1 + (factor * 3);
+        }
+    }
+
+    getFatPercentageScale = () => {
+        const scales = [
+            { 'min': 0, 'max': 12, 'female': [12.0, 21.0, 30.0, 34.0], 'male': [7.0, 16.0, 25.0, 30.0] },
+            { 'min': 12, 'max': 14, 'female': [15.0, 24.0, 33.0, 37.0], 'male': [7.0, 16.0, 25.0, 30.0] },
+            { 'min': 14, 'max': 16, 'female': [18.0, 27.0, 36.0, 40.0], 'male': [7.0, 16.0, 25.0, 30.0] },
+            { 'min': 16, 'max': 18, 'female': [20.0, 28.0, 37.0, 41.0], 'male': [7.0, 16.0, 25.0, 30.0] },
+            { 'min': 18, 'max': 40, 'female': [21.0, 28.0, 35.0, 40.0], 'male': [11.0, 17.0, 22.0, 27.0] },
+            { 'min': 40, 'max': 60, 'female': [22.0, 29.0, 36.0, 41.0], 'male': [12.0, 18.0, 23.0, 28.0] },
+            { 'min': 60, 'max': 100, 'female': [23.0, 30.0, 37.0, 42.0], 'male': [14.0, 20.0, 25.0, 30.0] },
+        ];
+
+        for (const scale in scales) {
+            if (this.age >= scales[scale].min && this.age < scales[scale].max) {
+                return scales[scale][this.sex]
+            }
+        }
+        return [7.0, 16.0, 25.0, 30.0];
+
+    }
+
+    getMuscleMassScale = () => {
+
+        const scales = [
+            { 'min': { 'male': 170, 'female': 160 }, 'female': [36.5, 42.6], 'male': [49.4, 59.5] },
+            { 'min': { 'male': 160, 'female': 150 }, 'female': [32.9, 37.6], 'male': [44.0, 52.5] },
+            { 'min': { 'male': 0, 'female': 0 }, 'female': [29.1, 34.8], 'male': [38.5, 46.6] },
+        ];
+
+        for (const scale in scales) {
+            if (this.height >= scales[scale].min[this.sex]) {
+                return scales[scale][this.sex]
+            }
+        }
+
+        return [49.4, 59.5];
+
     }
 }

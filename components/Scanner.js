@@ -128,7 +128,8 @@ export default function Scanner() {
                 muscleMass,
                 boneMass,
                 visceralFat,
-                waterPercentage } = metrics.getResult();
+                waterPercentage,
+                bodyType } = metrics.getResult();
 
             setBodyComposition({
                 ...bodyComposition,
@@ -145,6 +146,7 @@ export default function Scanner() {
                 boneMass: boneMass.value.toFixed(2),
                 visceralFat: visceralFat.value.toFixed(2),
                 waterPercentage: waterPercentage.value.toFixed(2),
+                bodyType: bodyType.value
             });
 
             await stopScan();
