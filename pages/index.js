@@ -18,7 +18,7 @@ export default function Home() {
 
         <div className={styles.center}>
           <div>
-            <h1>Web Body Composition</h1>
+            <h1 className='text-3xl font-bold underline'>Web Body Composition</h1>
           </div>
           <div>
             <ul>
