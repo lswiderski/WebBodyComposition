@@ -1,19 +1,17 @@
-# WebBodyComposition
+# Web Body Composition
 
-Web App to export data from Mi Body Composition Scale and upload it to Garmin Connect Cloud
+Web App to export data from Mi Body Composition Scale and upload it to Garmin Connect Cloud.
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Under development
 
-## Getting Started
+On iOS and iPadOS please use Bluefy - Web BLE Browser. Other browsers do not support Bluetooth
 
-First, run the development server:
+Demo: [`https://web-body-composition.vercel.app/`](https://web-body-composition.vercel.app/).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+## Android Application
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- https://github.com/lswiderski/mi-scale-exporter/
+
+## If you like my work, you can buy me a coffee
+
+<a href="https://www.buymeacoffee.com/lukaszswiderski" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
