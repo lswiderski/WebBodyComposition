@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link';
 import { useBodyCompositionContext } from '../contexts/bodycomposition.context';
 import { useNotificationsContext } from '../contexts/notifications.context';
 import Metrics from '@/services/metrics';
@@ -157,35 +158,99 @@ export default function Scanner() {
 
         <div>
             <div>
-                <div className="input">
-                    <label>Age</label>
-                    <input name="age" type="number" required
+                <label className="block">
+                    <span className="text-gray-700">Age</span>
+                    <input
+                        type="number"
+                        name="age"
+                        min={0}
                         value={age}
-                        onChange={e => setAge(e.target.value)} />
-                </div>
-                <div className="input">
-                    <label>Height (cm)</label>
-                    <input name="height" type="number" required
+                        onChange={e => setAge(e.target.value)}
+                        className="
+                mt-1
+                block
+                w-full
+                rounded-md
+                border-gray-300
+                shadow-sm
+                focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+              "
+                        placeholder=""
+                    />
+                </label>
+                <label className="block">
+                    <span className="text-gray-700">Height (cm)</span>
+                    <input
+                        type="number"
+                        name="height"
+                        min={0}
                         value={height}
-                        onChange={e => setHeight(e.target.value)} />
-                </div>
-                <div className="input">
-                    <label>Gender</label>
-                    <select name="gender"
+                        onChange={e => setHeight(e.target.value)}
+                        className="
+            mt-1
+            block
+            w-full
+            rounded-md
+            border-gray-300
+            shadow-sm
+            focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+          "
+                        placeholder=""
+                    />
+                </label>
+
+                <label className="block">
+                    <span className="text-gray-700">Gender</span>
+                    <select
+                        name="gender"
                         value={gender}
-                        onChange={e => setGender(e.target.value)} >
+                        onChange={e => setGender(e.target.value)}
+                        className="
+                    block
+                    w-full
+                    mt-1
+                    rounded-md
+                    border-gray-300
+                    shadow-sm
+                    focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                  "
+                    >
                         <option value="female">Female</option>
                         <option value="male">Male</option>
                     </select>
-                </div>
+                </label>
+            </div>
+            <div className='flex flex-wrap'>
+                <Link href="/" passHref>
+                    <button
+                        type="button"
+                        className='bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded mt-5 mr-auto'
+                    >  &lt; Back
+                    </button>
+                </Link>
+                <button
+                    onClick={onStartButtonClick}
+                    className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
+                > Start Scan
+                </button>
+                <button
+                    onClick={onStopButtonClick}
+                    className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
+                > Stop Scan
+                </button>
+                <button
+                    onClick={() => {
+                        router.push('/sync/garmin')
+                    }}
+                    className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
+                > Go To Garmin Form
+                </button>
             </div>
 
-            <button onClick={onStartButtonClick}>Start </button>
 
-            <button onClick={onStopButtonClick}>Stop</button>
-            <button onClick={() => {
-                router.push('/sync/garmin')
-            }}>Go To Garmin Form</button>
+
+
+
             status: {notification.status}
         </div>
     )
