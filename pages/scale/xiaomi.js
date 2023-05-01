@@ -8,7 +8,7 @@ export default function Xiaomi() {
     return (
         <>
             <div className='flex flex-wrap'>
-                <div className='w-full max-w-md ml-auto mr-auto'>
+                <div className='w-full max-w-sm ml-auto mr-auto'>
 
                     <h1 className='text-3xl font-bold text-center mb-5'>Mi Body Composition Scale Scanner</h1>
                     <div className='flex mb-5'>
