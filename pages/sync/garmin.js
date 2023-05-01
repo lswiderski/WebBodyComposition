@@ -5,15 +5,15 @@ import { useBodyCompositionContext } from '../../contexts/bodycomposition.contex
 
 export default function Garmin() {
     const { bodyComposition, setBodyComposition } = useBodyCompositionContext();
-    const [weight, setWeight] = useState(bodyComposition.weight);
-    const [bmi, setBmi] = useState(bodyComposition.bmi);
-    const [fat, setFat] = useState(bodyComposition.fat);
-    const [muscleMass, setMuscleMass] = useState(bodyComposition.muscleMass);
-    const [waterPercentage, setWaterPercentage] = useState(bodyComposition.waterPercentage);
-    const [boneMass, setBoneMass] = useState(bodyComposition.boneMass);
-    const [visceralFat, setVisceralFat] = useState(bodyComposition.visceralFat);
-    const [metabolicAge, setMetabolicAge] = useState(bodyComposition.metabolicAge);
-    const [bodyType, setBodyType] = useState(bodyComposition.bodyType);
+    const [weight, setWeight] = useState(bodyComposition.weight ?? 0);
+    const [bmi, setBmi] = useState(bodyComposition.bmi ?? 0);
+    const [fat, setFat] = useState(bodyComposition.fat ?? 0);
+    const [muscleMass, setMuscleMass] = useState(bodyComposition.muscleMass ?? 0);
+    const [waterPercentage, setWaterPercentage] = useState(bodyComposition.waterPercentage ?? 0);
+    const [boneMass, setBoneMass] = useState(bodyComposition.boneMass ?? 0);
+    const [visceralFat, setVisceralFat] = useState(bodyComposition.visceralFat ?? 0);
+    const [metabolicAge, setMetabolicAge] = useState(bodyComposition.metabolicAge ?? 0);
+    const [bodyType, setBodyType] = useState(bodyComposition.bodyType ?? 0);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
