@@ -1,5 +1,5 @@
 
-import Scanner from '@/components/scanner2';
+import Scanner from '@/components/scanner';
 import { useBodyCompositionContext } from '../../contexts/bodycomposition.context';
 export default function Xiaomi() {
     const { bodyComposition } = useBodyCompositionContext();

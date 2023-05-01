@@ -1,17 +1,26 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link';
+import useLocalStorageState from 'use-local-storage-state'
 import { useBodyCompositionContext } from '../contexts/bodycomposition.context';
 import { useNotificationsContext } from '../contexts/notifications.context';
 import Metrics from '@/services/metrics';
 
 export default function Scanner() {
+
     const { bodyComposition, setBodyComposition } = useBodyCompositionContext();
     const { notification, setNotification } = useNotificationsContext();
     const router = useRouter();
-    const [age, setAge] = useState(25);
-    const [height, setHeight] = useState(180);
-    const [gender, setGender] = useState('male');
+    const [age, setAge] = useLocalStorageState('age', {
+        defaultValue: 25
+    });
+    const [height, setHeight] = useLocalStorageState('height', {
+        defaultValue: 180
+    });
+    const [gender, setGender] = useLocalStorageState('gender', {
+        defaultValue: 'male'
+    });
+
     var myCharacteristic;
 
     async function startScan() {
@@ -251,6 +260,4 @@ export default function Scanner() {
             status: {notification.status}
         </div>
     )
-
 }
-
