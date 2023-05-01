@@ -52,11 +52,13 @@ export default function Garmin() {
                 })
                 .catch(error => {
                     console.log(error);
+                    alert("Error, check console");
                 });
 
         }
         catch (err) {
             console.log(err);
+            alert("Error, check console");
         }
 
     };
