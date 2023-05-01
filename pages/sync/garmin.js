@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Head from 'next/head'
 import Link from 'next/link'
 import axios from 'axios';
 import { useBodyCompositionContext } from '../../contexts/bodycomposition.context';
@@ -64,12 +63,6 @@ export default function Garmin() {
 
     return (
         <>
-            <Head>
-                <title>Web Body Composition</title>
-                <meta name="description" content="Web Body Composition App" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
             <div className='flex flex-wrap'>
                 <div className='w-full max-w-lg ml-auto mr-auto'>
                     <h1 className='text-3xl font-bold text-center mb-5'> Garmin Body Composition Form</h1>

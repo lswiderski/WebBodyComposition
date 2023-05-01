@@ -248,9 +248,6 @@ export default function Scanner() {
             </div>
 
 
-
-
-
             status: {notification.status}
         </div>
     )

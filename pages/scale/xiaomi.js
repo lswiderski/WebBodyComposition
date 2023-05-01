@@ -1,5 +1,5 @@
-import Head from 'next/head'
-import Scanner from '../../components/Scanner'
+
+import Scanner from '@/components/scanner2';
 import { useBodyCompositionContext } from '../../contexts/bodycomposition.context';
 export default function Xiaomi() {
     const { bodyComposition } = useBodyCompositionContext();
@@ -7,12 +7,6 @@ export default function Xiaomi() {
 
     return (
         <>
-            <Head>
-                <title>Web Body Composition</title>
-                <meta name="description" content="Web Body Composition App" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
             <div className='flex flex-wrap'>
                 <div className='w-full max-w-lg ml-auto mr-auto'>
 
