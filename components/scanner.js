@@ -236,6 +236,21 @@ export default function Scanner() {
                 </label>
             </div>
             <div className='flex flex-wrap'>
+
+
+                <button
+                    onClick={onStopButtonClick}
+                    className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 mr-auto'
+                > Stop Scan
+                </button>
+                <button
+                    onClick={onStartButtonClick}
+                    className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
+                > Start Scan
+                </button>
+
+            </div>
+            <div className='flex flex-wrap'>
                 <Link href="/" passHref>
                     <button
                         type="button"
@@ -243,16 +258,7 @@ export default function Scanner() {
                     >  &lt; Back
                     </button>
                 </Link>
-                <button
-                    onClick={onStartButtonClick}
-                    className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
-                > Start Scan
-                </button>
-                <button
-                    onClick={onStopButtonClick}
-                    className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
-                > Stop Scan
-                </button>
+
                 <button
                     onClick={() => {
                         router.push('/sync/garmin')

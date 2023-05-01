@@ -4,7 +4,7 @@ export default function Footer() {
     return (
         <footer className="text-center items-center">
 
-            <div >
+            <div className="mb-5" >
                 <a href="https://www.buymeacoffee.com/lukaszswiderski" target="_blank" ><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174" className="mr-auto ml-auto" /></a>
 
             </div>

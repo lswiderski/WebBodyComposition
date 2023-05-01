@@ -8,7 +8,7 @@ export default function Xiaomi() {
     return (
         <>
             <div className='flex flex-wrap'>
-                <div className='w-full max-w-lg ml-auto mr-auto'>
+                <div className='w-full max-w-md ml-auto mr-auto'>
 
                     <h1 className='text-3xl font-bold text-center mb-5'>Mi Body Composition Scale Scanner</h1>
                     <div className='flex mb-5'>
@@ -21,10 +21,11 @@ export default function Xiaomi() {
                                     alt="Download Bluefy browser on the App Store"
                                     height="40"
                                     width="135"
-                                    className=" ml-auto" /></a>
+                                    className="ml-auto" /></a>
                         </div>
 
                     </div>
+                    <p className='mb-5'>After click on &quot;Start Scan&quot; connect with your scale. Probably called MIBCS  </p>
 
                     <Scanner></Scanner>
                     {
@@ -52,9 +53,6 @@ export default function Xiaomi() {
                             <p> Body Type: {bodyComposition.bodyType} </p>
                         </div>
                     }
-
-
-
 
                 </div>
             </div>

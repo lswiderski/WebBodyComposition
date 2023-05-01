@@ -66,7 +66,7 @@ export default function Garmin() {
     return (
         <>
             <div className='flex flex-wrap'>
-                <div className='w-full max-w-lg ml-auto mr-auto'>
+                <div className='w-full max-w-md ml-auto mr-auto'>
                     <h1 className='text-3xl font-bold text-center mb-5'> Garmin Body Composition Form</h1>
                     <form onSubmit={submitGarminForm}
                         className=''>
