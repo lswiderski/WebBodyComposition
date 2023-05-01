@@ -13,7 +13,7 @@ export default function Layout({ children }) {
             </Head>
             <div className='flex flex-col h-screen justify-between'>
                 <Navbar />
-                <main className='flex items-center'>
+                <main className='flex '>
                     <div className='ml-auto mr-auto'>
                         {children}
                     </div>

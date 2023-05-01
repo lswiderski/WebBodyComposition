@@ -10,14 +10,20 @@ export default function Xiaomi() {
             <div className='flex flex-wrap'>
                 <div className='w-full max-w-lg ml-auto mr-auto'>
 
-                    <h1 className='text-3xl font-bold text-center mb-5'>Mi Scale Body Composition Scanner</h1>
-                    <div>
+                    <h1 className='text-3xl font-bold text-center mb-5'>Mi Body Composition Scale Scanner</h1>
+                    <div className='flex mb-5'>
 
+                        <p className=''>On iOS and iPadOS please use <code>Bluefy - Web BLE Browser</code>. It does not work on Safari or Chrome </p>
 
+                        <div className=' w-screen mr-auto'>
+                            <a href="https://apps.apple.com/us/app/bluefy-web-ble-browser/id1492822055" target="_blank" >
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
+                                    alt="Download Bluefy browser on the App Store"
+                                    height="40"
+                                    width="135"
+                                    className=" ml-auto" /></a>
+                        </div>
 
-                        <p>The Web Bluetooth API lets websites discover and communicate with devices over the Bluetooth 4 wireless standard using the Generic Attribute Profile (GATT). It is currently partially implemented in Android M, Chrome OS, Mac, and Windows 10/11.
-                        </p>
-                        <p className='mt-5'>On iOS and iPadOS please use <code>Bluefy - Web BLE Browser</code></p>
                     </div>
 
                     <Scanner></Scanner>
