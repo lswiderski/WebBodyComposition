@@ -132,7 +132,7 @@ export default function Garmin() {
                             />
                         </label>
                         <label className="block">
-                            <span className="text-gray-700">Muscle Mass (kg)</span>
+                            <span className="text-gray-700">Skeletal Muscle Mass (kg)</span>
                             <input
                                 type="number"
                                 name="muscleMass"
@@ -153,7 +153,7 @@ export default function Garmin() {
                             />
                         </label>
                         <label className="block">
-                            <span className="text-gray-700">Water (%)</span>
+                            <span className="text-gray-700">Body Water (%)</span>
                             <input
                                 type="number"
                                 name="waterPercentage"
@@ -216,7 +216,7 @@ export default function Garmin() {
                             />
                         </label>
                         <label className="block">
-                            <span className="text-gray-700">Body age (years)</span>
+                            <span className="text-gray-700">Metabolic Age (years)</span>
                             <input
                                 type="number"
                                 name="metabolicAge"
@@ -238,7 +238,7 @@ export default function Garmin() {
                         </label>
 
                         <label className="block">
-                            <span className="text-gray-700">Body tye</span>
+                            <span className="text-gray-700">Physique Raiting</span>
                             <input
                                 type="number"
                                 name="bodyType"
