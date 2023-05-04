@@ -1,7 +1,7 @@
 import Metrics from '@/services/metrics';
 var myCharacteristic;
 
-export async function startScan({ age, height, gender, setBodyComposition, setScanning, setNotification, setSerrorMessage, notification }) {
+export async function startScan({ age, height, gender, setBodyComposition, setNotification, setScanning, setSerrorMessage, }) {
 
 
     setSerrorMessage('');
@@ -18,8 +18,6 @@ export async function startScan({ age, height, gender, setBodyComposition, setSc
     try {
         setScanning(true);
         setNotification({
-            ...notification,
-            scanning: true,
             status: 'Requesting Bluetooth Device...'
         });
 
@@ -27,28 +25,24 @@ export async function startScan({ age, height, gender, setBodyComposition, setSc
             filters: [{ services: [serviceUuid] }]
         });
         setNotification({
-            ...notification,
             status: 'Connecting to GATT Server...'
         });
         const server = await device.gatt.connect();
         setNotification({
-            ...notification,
             status: 'Getting Service....'
         });
         const service = await server.getPrimaryService(serviceUuid);
         setNotification({
-            ...notification,
             status: 'Getting Characteristic...'
         });
         myCharacteristic = await service.getCharacteristic(characteristicUuid);
 
         await myCharacteristic.startNotifications();
         setNotification({
-            ...notification,
             status: '> Notifications started'
         });
         myCharacteristic.addEventListener('characteristicvaluechanged',
-            (e) => { handleNotifications(e, age, height, gender, setBodyComposition, setScanning, setNotification, setSerrorMessage) });
+            (e) => { handleNotifications(e, age, height, gender, setBodyComposition, setNotification, setScanning, setSerrorMessage) });
 
     } catch (error) {
         console.log('Argh! ' + error);
@@ -73,19 +67,18 @@ export async function stopScan({ setScanning, setSerrorMessage }) {
     }
 }
 
-export async function handleNotifications(event, age, height, gender, setBodyComposition, setScanning, setNotification, setSerrorMessage) {
+export async function handleNotifications(event, age, height, gender, setBodyComposition, setNotification, setScanning, setSerrorMessage) {
 
 
     let value = event.target.value;
     let notification = new Uint8Array(value.buffer).toString();
     setNotification({
-        ...notification,
         status: `received: ${notification}`
     });
-    await computeData(value, age, height, gender, setBodyComposition, setScanning, setNotification, setSerrorMessage);
+    await computeData(value, age, height, gender, setBodyComposition, setScanning, setSerrorMessage);
 }
 
-const computeData = async (data, age, height, gender, setBodyComposition, setScanning, setNotification, setSerrorMessage) => {
+const computeData = async (data, age, height, gender, setBodyComposition, setScanning, setSerrorMessage) => {
     const buffer = new Uint8Array(data.buffer)
     const ctrlByte1 = buffer[1]
     const stabilized = ctrlByte1 & (1 << 5)

@@ -4,9 +4,6 @@ import useLocalStorageState from 'use-local-storage-state'
 import { useBodyCompositionContext } from '../contexts/bodycomposition.context';
 import { useNotificationsContext } from '../contexts/notifications.context';
 
-var myCharacteristic;
-
-
 export default function Scanner() {
 
     const { bodyComposition, setBodyComposition } = useBodyCompositionContext();
@@ -24,13 +21,11 @@ export default function Scanner() {
     });
 
     async function onStartButtonClick() {
-        await startScan({ age, height, gender, setBodyComposition, setScanning, setNotification, setSerrorMessage, notification });
+        await startScan({ age, height, gender, setBodyComposition, setNotification, setScanning, setSerrorMessage });
     }
 
     async function onStopButtonClick() {
         setNotification({
-            ...notification,
-            scanning: false,
             status: 'Stopped'
         });
         await stopScan({ setScanning, setSerrorMessage });
