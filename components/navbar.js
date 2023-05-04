@@ -11,7 +11,7 @@ export default function Navbar() {
     return (
         <>
             <nav className="flex items-center justify-between flex-wrap bg-blue-500 p-6">
-                <Link href="/" passHref >
+                <Link href="/" passHref onClick={() => { toggleMenu() }}>
                     <div className="flex items-center flex-shrink-0 text-white mr-6">
                         <Image
                             src={scaleIcon}
@@ -33,13 +33,19 @@ export default function Navbar() {
                 </div>
                 <div className={`w-full  flex-grow lg:flex lg:items-center lg:w-auto ${isMenuOpen ? 'block' : 'hidden'}`}>
                     <div className="text-sm lg:flex-grow">
-                        <Link href="/scale/xiaomi" passHref className='block mt-4 lg:inline-block lg:mt-0 text-blue-100 hover:text-white mr-4'>
+                        <Link href="/scale/xiaomi" passHref
+                            onClick={() => { toggleMenu() }}
+                            className='block mt-4 lg:inline-block lg:mt-0 text-blue-100 hover:text-white mr-4'>
                             Mi Scale Scanner
                         </Link>
-                        <Link href="/sync/garmin" passHref className='block mt-4 lg:inline-block lg:mt-0 text-blue-100 hover:text-white mr-4'>
+                        <Link href="/sync/garmin" passHref
+                            onClick={() => { toggleMenu() }}
+                            className='block mt-4 lg:inline-block lg:mt-0 text-blue-100 hover:text-white mr-4'>
                             Garmin Connect form
                         </Link>
-                        <Link href="/faq" passHref className='block mt-4 lg:inline-block lg:mt-0 text-blue-100 hover:text-white mr-4'>
+                        <Link href="/faq" passHref
+                            onClick={() => { toggleMenu() }}
+                            className='block mt-4 lg:inline-block lg:mt-0 text-blue-100 hover:text-white mr-4'>
                             FAQ
                         </Link>
 
