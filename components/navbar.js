@@ -39,7 +39,9 @@ export default function Navbar() {
                         <Link href="/sync/garmin" passHref className='block mt-4 lg:inline-block lg:mt-0 text-blue-100 hover:text-white mr-4'>
                             Garmin Connect form
                         </Link>
-
+                        <Link href="/faq" passHref className='block mt-4 lg:inline-block lg:mt-0 text-blue-100 hover:text-white mr-4'>
+                            FAQ
+                        </Link>
 
                     </div>
                     <div>

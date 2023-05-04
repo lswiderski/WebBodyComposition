@@ -1,4 +1,4 @@
-
+/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link'
 
 export default function Home() {
@@ -8,11 +8,6 @@ export default function Home() {
         <div>
           <h1 className='text-3xl font-bold text-center'>Web Body Composition</h1>
         </div>
-        <div className='m-5 max-w-md'>
-          <p>Keep in mind that this is an early version of the application and it may contain bugs. I would appreciate your feedback on Github</p>
-        </div>
-
-
         <div className='flex flex-wrap'>
           <Link href="/scale/xiaomi" passHref className='m-5 w-full mr-auto ml-auto'>
             <button
@@ -28,6 +23,13 @@ export default function Home() {
             > Garmin Connect Form
             </button>
           </Link>
+          <Link href="/faq" passHref className='m-5 w-full mr-auto ml-auto'>
+            <button
+              type="submit"
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
+            > FAQ
+            </button>
+          </Link>
           <Link href="https://play.google.com/store/apps/details?id=com.lukaszswiderski.MiScaleExporter" target='_blank' className='m-5 w-full mr-auto ml-auto'>
             <button
               type="submit"
@@ -35,6 +37,16 @@ export default function Home() {
             > Android Application
             </button>
           </Link>
+          <div className="mr-auto ml-auto" >
+            <a href="https://www.buymeacoffee.com/lukaszswiderski" target="_blank" >
+              <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png"
+                alt="Buy Me A Coffee"
+                height="41"
+                width="174"
+              />
+            </a>
+          </div>
+
         </div>
       </div>
     </>
