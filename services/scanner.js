@@ -51,7 +51,6 @@ export async function startScan({ age, height, gender, setBodyComposition, setSc
             (e) => { handleNotifications(e, age, height, gender, setBodyComposition, setScanning, setNotification, setSerrorMessage) });
 
     } catch (error) {
-        debugger;
         console.log('Argh! ' + error);
         setScanning(false);
         setSerrorMessage(error.toString());
@@ -59,7 +58,6 @@ export async function startScan({ age, height, gender, setBodyComposition, setSc
 }
 
 export async function stopScan({ setScanning, setSerrorMessage }) {
-    debugger;
     setScanning(false);
     if (myCharacteristic) {
         try {
