@@ -48,11 +48,12 @@ export default function Garmin() {
                 .post('https://frog01-20364.wykr.es/upload', payload, axiosConfig)
                 .then(response => {
                     console.log(response);
-                    alert("Success");
+                    alert("Success. Uploaded.");
                 })
                 .catch(error => {
                     console.log(error);
-                    alert("Error, check console");
+                    const errorMessage = error?.response?.data;
+                    alert(`${errorMessage}`);
                 });
 
         }
