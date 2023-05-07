@@ -138,7 +138,7 @@ export default function Garmin() {
                                 />
                             </label>
                             <label className="block">
-                                <span className="text-gray-700">Skeletal Muscle Mass (kg)</span>
+                                <span className="text-gray-700">Muscle Mass (kg)</span>
                                 <input
                                     type="number"
                                     name="muscleMass"
