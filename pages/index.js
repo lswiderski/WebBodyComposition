@@ -8,8 +8,9 @@ export default function Home() {
         <div>
           <h1 className='text-3xl font-bold text-center'>Web Body Composition</h1>
         </div>
-        <div className='text-justify p-3'>
-          <p> This app allows you to get weight and body composition data from the Mi Body Composition Scale and send it to the Garmin Connect cloud.</p>
+        <div className='text-justify '>
+          <p className='p-3'> This app allows you to get weight and body composition data from the Mi Body Composition Scale and send it to the Garmin Connect cloud.</p>
+          <p className='p-3'> You can also manually add the body composition data to Garmin Connect</p>
         </div>
         <div className='flex flex-wrap'>
           <Link href="/scale/xiaomi" passHref className='m-5 w-full mr-auto ml-auto'>
@@ -23,7 +24,7 @@ export default function Home() {
             <button
               type="submit"
               className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
-            > Garmin Connect Form
+            > Manual Garmin Connect Import
             </button>
           </Link>
           <Link href="/faq" passHref className='m-5 w-full mr-auto ml-auto'>
