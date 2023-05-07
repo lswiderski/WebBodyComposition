@@ -10,7 +10,7 @@ export default function Xiaomi() {
             <div className='flex flex-wrap'>
                 <div className='w-full max-w-sm ml-auto mr-auto'>
 
-                    <h1 className='text-3xl font-bold text-center mb-5'>Mi Body Composition Scale Scanner</h1>
+                    <h1 className='text-2xl font-bold text-center mb-5'>Mi Body Composition Scale Scanner</h1>
                     <Scanner></Scanner>
                     {
                         bodyComposition.weight &&
@@ -36,8 +36,8 @@ export default function Xiaomi() {
                             <div className='flex justify-between '> <div> Body Type: </div><div className='font-bold' >{bodyComposition.bodyType} </div> </div>
                         </div>
                     }
-                    <div className='flex flex-wrap'>
-                        <Link href="/" passHref className=' mr-auto'>
+                    <div className='flex flex-wrap mt-10'>
+                        <Link href="/" passHref className='mr-auto'>
                             <button
                                 type="button"
                                 className='bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded mt-5'
