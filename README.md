@@ -43,3 +43,14 @@ Tested with Mi Body Composition Scale 1 and:
 ## If you like my work, you can buy me a coffee
 
 <a href="https://www.buymeacoffee.com/lukaszswiderski" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
+## Screenshots
+
+![Web Application index](https://github.com/lswiderski/WebBodyComposition/blob/main/resources/img/screenshots/1_index.png)
+![Scanner](https://github.com/lswiderski/WebBodyComposition/blob/main/resources/img/screenshots/2_xiaomi_scanner.png)
+![Scale request](https://github.com/lswiderski/WebBodyComposition/blob/main/resources/img/screenshots/3_request.png)
+![Scanning](https://github.com/lswiderski/WebBodyComposition/blob/main/resources/img/screenshots/4_scanning.png)
+![Result](https://github.com/lswiderski/WebBodyComposition/blob/main/resources/img/screenshots/5_result.png)
+![Garmin Form](https://github.com/lswiderski/WebBodyComposition/blob/main/resources/img/screenshots/6_garmin_form.png)
+![FAQ](https://github.com/lswiderski/WebBodyComposition/blob/main/resources/img/screenshots/7_faq.png)
+![Garmin Connect](https://github.com/lswiderski/WebBodyComposition/blob/main/resources/img/screenshots/8_garmin_result.png)
