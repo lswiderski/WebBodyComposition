@@ -8,7 +8,7 @@ Application URL: https://web-body-composition.vercel.app/
 
 Unfortunately, neither Safari nor Chrome support the Web Bluetooth API on Apple devices (only on macOS does it work). The solution to this is alternative browsers. One of them is:
 
-- Bluefy - Web BLE Browser.
+- [Bluefy - Web BLE Browser](https://apps.apple.com/us/app/bluefy-web-ble-browser/id1492822055)
 
 Find it in the App Store and install it. Then open the Apps page in it.
 
