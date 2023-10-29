@@ -16,6 +16,9 @@ export default function Garmin() {
     const [bodyType, setBodyType] = useState(bodyComposition.bodyType ?? 0);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showMFACode, setShowMFACode] = useState(false);
+    const [mfaCode, setMfaCode] = useState('');
+    const [clientId, setClientId] = useState('');
 
     const submitGarminForm = async (event) => {
         event.preventDefault();
@@ -34,6 +37,8 @@ export default function Garmin() {
             bodyMassIndex: parseFloat(bmi ?? 0),
             email,
             password,
+            mfaCode,
+            clientId,
         }
 
         try {
@@ -48,11 +53,22 @@ export default function Garmin() {
                 .post('https://frog01-20364.wykr.es/upload', payload, axiosConfig)
                 .then(response => {
                     console.log(response);
-                    alert("Success. Uploaded.");
+                    if (response.status === 201) {
+                        alert("Success. Uploaded.");
+                    } else if (response.status === 200) {
+                        setShowMFACode(true);
+                        setClientId(response.data.clientId);
+                        alert("MFA/2FA Code required. Please provide it.");
+                    }
+                    else {
+                        alert(`Response Status: ${response.status}`);
+                    }
+
                 })
                 .catch(error => {
                     console.log(error);
                     const errorMessage = error?.response?.data;
+                    debugger;
                     alert(`${errorMessage}`);
                 });
 
@@ -307,6 +323,26 @@ export default function Garmin() {
                                 placeholder="********"
                             />
                         </label>
+                        {showMFACode && <label className="block mt-10">
+                            <span className="text-gray-700">MFA Code</span>
+                            <input
+                                type="text"
+                                name="mfaCode"
+                                value={mfaCode}
+                                onChange={(e) => setMfaCode(e.target.value)}
+                                required
+                                className="
+               mt-1
+               block
+               w-full
+               rounded-md
+               border-gray-300
+               shadow-sm
+               focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+             "
+                                placeholder="123456"
+                            />
+                        </label>}
                         <div className='flex flex-wrap'>
                             <Link href="/" passHref>
                                 <button
