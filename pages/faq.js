@@ -5,7 +5,7 @@ export default function Faq() {
 
     return (
         <>
-            <div className='max-w-sm mb-5'>
+            <div className='max-w-md p-5 mb-5'>
                 <ol>
                     <li className='mb-5'>
                         <div className='font-bold'>1. iOS / iPadOS</div>
