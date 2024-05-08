@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import axios from 'axios';
+import useLocalStorageState from 'use-local-storage-state'
 import { useBodyCompositionContext } from '../../contexts/bodycomposition.context';
 
 export default function Garmin() {
@@ -14,12 +15,39 @@ export default function Garmin() {
     const [visceralFat, setVisceralFat] = useState(bodyComposition.visceralFat ?? 0);
     const [metabolicAge, setMetabolicAge] = useState(bodyComposition.metabolicAge ?? 0);
     const [bodyType, setBodyType] = useState(bodyComposition.bodyType ?? 0);
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useLocalStorageState('email', {
+        defaultValue: ''
+    });
     const [password, setPassword] = useState('');
     const [showMFACode, setShowMFACode] = useState(false);
     const [mfaCode, setMfaCode] = useState('');
     const [clientId, setClientId] = useState('');
+    const [accessToken, setAccessToken] = useLocalStorageState('accessToken', {
+        defaultValue: ''
+    });
+    const [tokenSecret, setTokenSecret] = useLocalStorageState('tokenSecret', {
+        defaultValue: ''
+    });
+    const [saveToken, setSaveToken] = useLocalStorageState('saveToken', {
+        defaultValue: false
+    });
 
+    useEffect(() => {
+        let value;
+        value = (localStorage.getItem("saveToken") || false) === 'true'
+        setSaveToken(value)
+    }, [])
+    const checkSaveTokenHandler = () => {
+        localStorage.setItem("saveToken", !saveToken)
+        setSaveToken(!saveToken)
+    }
+
+    const isTokenSaved = saveToken && accessToken && tokenSecret;
+
+    const clearTokens = async () => {
+        setAccessToken('');
+        setTokenSecret('');
+    }
     const submitGarminForm = async (event) => {
         event.preventDefault();
 
@@ -39,6 +67,8 @@ export default function Garmin() {
             password,
             mfaCode,
             clientId,
+            accessToken,
+            tokenSecret,
         }
 
         try {
@@ -52,7 +82,12 @@ export default function Garmin() {
             await axios
                 .post('https://frog01-20364.wykr.es/upload', payload, axiosConfig)
                 .then(response => {
+                    debugger;
                     console.log(response);
+                    if (saveToken && response.data.accessToken && response.data.tokenSecret) {
+                        setAccessToken(response.data.accessToken);
+                        setTokenSecret(response.data.tokenSecret);
+                    }
                     if (response.status === 201) {
                         alert("Success. Uploaded.");
                     } else if (response.status === 200) {
@@ -63,17 +98,24 @@ export default function Garmin() {
                     else {
                         alert(`Response Status: ${response.status}`);
                     }
+                    if (response.status === 401) {
+                        clearTokens();
+                    }
 
                 })
                 .catch(error => {
                     console.log(error);
                     const errorMessage = error?.response?.data;
                     debugger;
+                    if (errorMessage.includes('401 (Unauthorized)')) {
+                        clearTokens();
+                    }
                     alert(`${errorMessage}`);
                 });
 
         }
         catch (err) {
+            debugger;
             console.log(err);
             alert("Error, check console");
         }
@@ -283,7 +325,7 @@ export default function Garmin() {
                         </label>
 
 
-                        <label className="block mt-10">
+                        {!isTokenSaved && <label className="block mt-10">
                             <span className="text-gray-700">Email address</span>
                             <input
                                 type="email"
@@ -302,8 +344,8 @@ export default function Garmin() {
              "
                                 placeholder="john@example.com"
                             />
-                        </label>
-                        <label className="block">
+                        </label>}
+                        {!isTokenSaved && <label className="block">
                             <span className="text-gray-700">Password</span>
                             <input
                                 type="password"
@@ -322,7 +364,7 @@ export default function Garmin() {
                     "
                                 placeholder="********"
                             />
-                        </label>
+                        </label>}
                         {showMFACode && <label className="block mt-10">
                             <span className="text-gray-700">MFA Code</span>
                             <input
@@ -343,6 +385,19 @@ export default function Garmin() {
                                 placeholder="123456"
                             />
                         </label>}
+                        {!isTokenSaved && <div className="mt-2">
+                            <input type="checkbox" id="saveToken" checked={saveToken} onChange={checkSaveTokenHandler} />
+                            <label htmlFor="saveToken" className="ml-2">remember me (save access token in browser) </label>
+                        </div>
+                        }
+                        {isTokenSaved && <div className="mt-5">
+                            <label className="block text-center">
+                                <div>Logged as {email}</div>
+                                <a href='#' className="underline" onClick={clearTokens}>
+                                    Clear access tokens and change credencials
+                                </a>
+                            </label>
+                        </div>}
                         <div className='flex flex-wrap'>
                             <Link href="/" passHref>
                                 <button
