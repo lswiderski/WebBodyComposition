@@ -82,14 +82,14 @@ export default function Garmin() {
             await axios
                 .post('https://frog01-20364.wykr.es/upload', payload, axiosConfig)
                 .then(response => {
-                    debugger;
                     console.log(response);
-                    if (saveToken && response.data.accessToken && response.data.tokenSecret) {
-                        setAccessToken(response.data.accessToken);
-                        setTokenSecret(response.data.tokenSecret);
+                    if (saveToken && response.data.uploadResult.accessToken && response.data.uploadResult.tokenSecret) {
+                        setAccessToken(response.data.uploadResult.accessToken);
+                        setTokenSecret(response.data.uploadResult.tokenSecret);
                     }
                     if (response.status === 201) {
                         alert("Success. Uploaded.");
+                        setShowMFACode(false);
                     } else if (response.status === 200) {
                         setShowMFACode(true);
                         setClientId(response.data.clientId);
@@ -106,8 +106,7 @@ export default function Garmin() {
                 .catch(error => {
                     console.log(error);
                     const errorMessage = error?.response?.data;
-                    debugger;
-                    if (errorMessage.includes('401 (Unauthorized)')) {
+                    if (errorMessage && errorMessage.includes('401 (Unauthorized)')) {
                         clearTokens();
                     }
                     alert(`${errorMessage}`);
@@ -115,7 +114,6 @@ export default function Garmin() {
 
         }
         catch (err) {
-            debugger;
             console.log(err);
             alert("Error, check console");
         }
@@ -387,7 +385,7 @@ export default function Garmin() {
                         </label>}
                         {!isTokenSaved && <div className="mt-2">
                             <input type="checkbox" id="saveToken" checked={saveToken} onChange={checkSaveTokenHandler} />
-                            <label htmlFor="saveToken" className="ml-2">remember me (save access token in browser) </label>
+                            <label htmlFor="saveToken" className="ml-2">remember me (save access token in the browser) </label>
                         </div>
                         }
                         {isTokenSaved && <div className="mt-5">
