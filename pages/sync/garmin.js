@@ -48,9 +48,8 @@ export default function Garmin() {
         setAccessToken('');
         setTokenSecret('');
     }
-    const submitGarminForm = async (event) => {
-        event.preventDefault();
 
+    const preapareApiRequest = () => {
         const payload =
         {
             timeStamp: -1,
@@ -71,6 +70,54 @@ export default function Garmin() {
             tokenSecret,
         }
 
+        return payload;
+    }
+
+
+    const generateFitFile = async (event) => {
+        event.preventDefault();
+        const payload = { ...preapareApiRequest(), createOnlyFile: true };
+        try {
+            let axiosConfig = {
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                responseType: 'blob'
+            };
+
+            await axios
+                .post('https://frog01-20364.wykr.es/upload', payload, axiosConfig)
+                .then(response => {
+                    // create file link in browser's memory
+                    const href = URL.createObjectURL(response.data);
+
+                    // create "a" HTML element with href to file & click
+                    const link = document.createElement('a');
+                    link.href = href;
+                    link.setAttribute('download', `garmin_weight_${(new Date().toJSON().slice(0, 10))}.fit`); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+
+                    // clean up "a" element & remove ObjectURL
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(href);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+
+        }
+        catch (err) {
+            console.log(err);
+            alert("Error, check console");
+        }
+    }
+
+    const submitGarminForm = async (event) => {
+        event.preventDefault();
+
+        const payload = preapareApiRequest();
         try {
             let axiosConfig = {
                 headers: {
@@ -117,7 +164,6 @@ export default function Garmin() {
             console.log(err);
             alert("Error, check console");
         }
-
     };
 
     return (
@@ -409,6 +455,16 @@ export default function Garmin() {
                                 className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
                             > Send to Garmin Connect
                             </button>
+                            <div className="block text-justify">
+                                <a href='#' className="underline block mt-5 mb-2 text-center" onClick={generateFitFile}>
+                                    Generate only .fit file without Email and Password.
+                                </a>
+                                <span>It can be used to manually upload data to the <a href='https://connect.garmin.com/modern/import-data' className="underline" target='_blank' >
+                                    Garmin Connect website
+                                </a> in case you don&apos;t want to provide your credentials or if the API has a problem with too many requests.</span>
+
+                            </div>
+
                         </div>
                     </form>
                 </div>
