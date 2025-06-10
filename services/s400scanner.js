@@ -5,15 +5,15 @@ const logDataView = (labelOfDataSource, key, valueDataView) => {
     const hexString = [...new Uint8Array(valueDataView.buffer)].map(b => {
         return b.toString(16).padStart(2, '0');
     }).join(' ');
-    if (hexString.startsWith('48')) {
+    //if (hexString.startsWith('48')) {
 
-        log(`  ${labelOfDataSource} Data: ` + key +
-            '\n    (Hex) ' + hexString);
-        console.log(valueDataView);
-        console.log(hexString);
-        console.log(valueDataView.buffer);
-        console.log(new Uint8Array(valueDataView.buffer));
-    }
+    log(`  ${labelOfDataSource} Data: ` + key +
+        '\n    (Hex) ' + hexString);
+    console.log(valueDataView);
+    console.log(hexString);
+    console.log(valueDataView.buffer);
+    console.log(new Uint8Array(valueDataView.buffer));
+    // }
 
 
 };
