@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { startScan, stopScan } from '../services/scanner'
+import { startScan, stopScan } from '../services/scanner';
+import { startS400Scan, stopS400Scan } from '../services/s400scanner'
 import useLocalStorageState from 'use-local-storage-state'
 import { useBodyCompositionContext } from '../contexts/bodycomposition.context';
 import { useNotificationsContext } from '../contexts/notifications.context';
@@ -21,14 +22,14 @@ export default function Scanner() {
     });
 
     async function onStartButtonClick() {
-        await startScan({ age, height, gender, setBodyComposition, setNotification, setScanning, setSerrorMessage });
+        await startS400Scan({ age, height, gender, setBodyComposition, setNotification, setScanning, setSerrorMessage });
     }
 
     async function onStopButtonClick() {
         setNotification({
             status: 'Stopped'
         });
-        await stopScan({ setScanning, setSerrorMessage });
+        await stopS400Scan({ setScanning, setSerrorMessage });
     }
 
     return (
@@ -96,6 +97,10 @@ export default function Scanner() {
                         <option value="male">Male</option>
                     </select>
                 </label>
+            </div>
+            <div>
+                <div id='log'>Log</div>
+
             </div>
             <div className='flex flex-wrap'>
                 <button
