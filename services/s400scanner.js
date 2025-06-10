@@ -5,11 +5,8 @@ const logDataView = (labelOfDataSource, key, valueDataView) => {
     const hexString = [...new Uint8Array(valueDataView.buffer)].map(b => {
         return b.toString(16).padStart(2, '0');
     }).join(' ');
-    const textDecoder = new TextDecoder('ascii');
-    const asciiString = textDecoder.decode(valueDataView.buffer);
     log(`  ${labelOfDataSource} Data: ` + key +
-        '\n    (Hex) ' + hexString +
-        '\n    (ASCII) ' + asciiString);
+        '\n    (Hex) ' + hexString);
 };
 
 const log = (message) => {
@@ -51,6 +48,8 @@ export async function startS400Scan({ age, height, gender, setBodyComposition, s
             log('  TX Power: ' + event.txPower);
             log('  UUIDs: ' + event.uuids);
             debugger;
+            log(event);
+            console.log(event);
             event.manufacturerData.forEach((valueDataView, key) => {
                 logDataView('Manufacturer', key, valueDataView);
             });
