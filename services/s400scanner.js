@@ -5,6 +5,7 @@ const logDataView = (labelOfDataSource, key, valueDataView) => {
     const hexString = [...new Uint8Array(valueDataView.buffer)].map(b => {
         return b.toString(16).padStart(2, '0');
     }).join(' ');
+    console.log(valueDataView);
     log(`  ${labelOfDataSource} Data: ` + key +
         '\n    (Hex) ' + hexString);
 };
