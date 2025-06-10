@@ -24,7 +24,7 @@ export async function startS400Scan({ age, height, gender, setBodyComposition, s
 
 
     try {
-        setScanning(true);
+        setScanning(false);
         setNotification({
             status: 'Requesting Bluetooth Device...'
         });
@@ -50,6 +50,7 @@ export async function startS400Scan({ age, height, gender, setBodyComposition, s
             log('  RSSI: ' + event.rssi);
             log('  TX Power: ' + event.txPower);
             log('  UUIDs: ' + event.uuids);
+            debugger;
             event.manufacturerData.forEach((valueDataView, key) => {
                 logDataView('Manufacturer', key, valueDataView);
             });
