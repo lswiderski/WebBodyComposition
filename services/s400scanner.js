@@ -5,9 +5,17 @@ const logDataView = (labelOfDataSource, key, valueDataView) => {
     const hexString = [...new Uint8Array(valueDataView.buffer)].map(b => {
         return b.toString(16).padStart(2, '0');
     }).join(' ');
-    console.log(valueDataView);
-    log(`  ${labelOfDataSource} Data: ` + key +
-        '\n    (Hex) ' + hexString);
+    if (hexString.startsWith('48')) {
+
+        log(`  ${labelOfDataSource} Data: ` + key +
+            '\n    (Hex) ' + hexString);
+        console.log(valueDataView);
+        console.log(hexString);
+        console.log(valueDataView.buffer);
+        console.log(new Uint8Array(valueDataView.buffer));
+    }
+
+
 };
 
 const log = (message) => {
@@ -17,9 +25,7 @@ const log = (message) => {
 
 export async function startS400Scan({ age, height, gender, setBodyComposition, setNotification, setScanning, setSerrorMessage, }) {
 
-
     setSerrorMessage('');
-
 
     try {
         setScanning(false);
@@ -42,24 +48,12 @@ export async function startS400Scan({ age, height, gender, setBodyComposition, s
         log(' filters: ' + JSON.stringify(scan.filters));
 
         navigator.bluetooth.addEventListener('advertisementreceived', event => {
-            log('Advertisement received.');
-            log('  Device Name: ' + event.device.name);
-            log('  Device ID: ' + event.device.id);
-            log('  RSSI: ' + event.rssi);
-            log('  TX Power: ' + event.txPower);
-            log('  UUIDs: ' + event.uuids);
-            debugger;
-            log(event);
-            console.log(event);
-            event.manufacturerData.forEach((valueDataView, key) => {
-                logDataView('Manufacturer', key, valueDataView);
-            });
             event.serviceData.forEach((valueDataView, key) => {
                 logDataView('Service', key, valueDataView);
             });
         });
 
-        setTimeout(stopScan, 10000);
+        setTimeout(stopScan, 30000);
         function stopScan() {
             log('Stopping scan...');
             scan.stop();
