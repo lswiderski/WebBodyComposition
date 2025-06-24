@@ -1,20 +1,26 @@
 import Metrics from '@/services/metrics';
 var myCharacteristic;
 
+const loggedData = new Map();
+
 const logDataView = (labelOfDataSource, key, valueDataView) => {
     const hexString = [...new Uint8Array(valueDataView.buffer)].map(b => {
         return b.toString(16).padStart(2, '0');
     }).join(' ');
     //if (hexString.startsWith('48')) {
-
-    log(`  ${labelOfDataSource} Data: ` + key +
-        '\n    (Hex) ' + hexString);
-    console.log(valueDataView);
-    console.log(hexString);
-    console.log(valueDataView.buffer);
-    console.log(new Uint8Array(valueDataView.buffer));
-    // }
-
+    if (!loggedData.has(hexString)) {
+        loggedData.set(hexString, valueDataView);
+        log(`  ${labelOfDataSource} Data: ` + key +
+            '\n    (Hex) ' + hexString +
+            '\n    (Buffer) ' + valueDataView.buffer +
+            '\n    (Uint8Array) ' + new Uint8Array(valueDataView.buffer)
+        );
+        console.log(valueDataView);
+        console.log(hexString);
+        console.log(valueDataView.buffer);
+        console.log(new Uint8Array(valueDataView.buffer));
+        // }
+    }
 
 };
 
@@ -53,11 +59,12 @@ export async function startS400Scan({ age, height, gender, setBodyComposition, s
             });
         });
 
-        setTimeout(stopScan, 30000);
+        setTimeout(stopScan, 60000);
         function stopScan() {
             log('Stopping scan...');
             scan.stop();
             log('Stopped.  scan.active = ' + scan.active);
+            debugger;
         }
     } catch (error) {
         log('Argh! ' + error);
