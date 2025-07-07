@@ -11,9 +11,7 @@ const logDataView = (labelOfDataSource, key, valueDataView) => {
     if (!loggedData.has(hexString)) {
         loggedData.set(hexString, valueDataView);
         log(`  ${labelOfDataSource} Data: ` + key +
-            '\n    (Hex) ' + hexString +
-            '\n    (Buffer) ' + valueDataView.buffer +
-            '\n    (Uint8Array) ' + new Uint8Array(valueDataView.buffer)
+            '\n    (Hex) ' + hexString
         );
         console.log(valueDataView);
         console.log(hexString);
@@ -43,7 +41,7 @@ export async function startS400Scan({ age, height, gender, setBodyComposition, s
         filters.push({ namePrefix: 'Xiaomi' });
         let options = {};
         options.filters = filters;
-
+        options.keepRepeatedDevices = true
         log('Requesting Bluetooth Scan with options: ' + JSON.stringify(options));
         const scan = await navigator.bluetooth.requestLEScan(options);
 
