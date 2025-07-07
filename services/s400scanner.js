@@ -42,28 +42,55 @@ export async function startS400Scan({ age, height, gender, setBodyComposition, s
         let options = {};
         options.filters = filters;
         options.keepRepeatedDevices = true
-        log('Requesting Bluetooth Scan with options: ' + JSON.stringify(options));
-        const scan = await navigator.bluetooth.requestLEScan(options);
 
-        log('Scan started with:');
-        log(' acceptAllAdvertisements: ' + scan.acceptAllAdvertisements);
-        log(' active: ' + scan.active);
-        log(' keepRepeatedDevices: ' + scan.keepRepeatedDevices);
-        log(' filters: ' + JSON.stringify(scan.filters));
+        //version 1 requestLEScan
 
-        navigator.bluetooth.addEventListener('advertisementreceived', event => {
+        /*  log('Requesting Bluetooth Scan with options: ' + JSON.stringify(options));
+          const scan = await navigator.bluetooth.requestLEScan(options);
+  
+          log('Scan started with:');
+          log(' acceptAllAdvertisements: ' + scan.acceptAllAdvertisements);
+          log(' active: ' + scan.active);
+          log(' keepRepeatedDevices: ' + scan.keepRepeatedDevices);
+          log(' filters: ' + JSON.stringify(scan.filters));
+  
+          navigator.bluetooth.addEventListener('advertisementreceived', event => {
+              event.serviceData.forEach((valueDataView, key) => {
+                  logDataView('Service', key, valueDataView);
+              });
+          });
+  
+          setTimeout(stopScan, 60000);
+          function stopScan() {
+              log('Stopping scan...');
+              scan.stop();
+              log('Stopped.  scan.active = ' + scan.active);
+              debugger;
+          }*/
+
+        //version 2 requestDevice
+        let serviceUuid = '0000fe95-0000-1000-8000-00805f9b34fb';
+        const device = await navigator.bluetooth.requestDevice({
+            filters: [{ services: [serviceUuid] }]
+        });
+
+        device.addEventListener('advertisementreceived', (event) => {
+            log('Advertisement received.');
+            log('  Device Name: ' + event.device.name);
+            log('  Device ID: ' + event.device.id);
+            log('  RSSI: ' + event.rssi);
+            log('  TX Power: ' + event.txPower);
+            log('  UUIDs: ' + event.uuids);
             event.serviceData.forEach((valueDataView, key) => {
                 logDataView('Service', key, valueDataView);
             });
         });
 
-        setTimeout(stopScan, 60000);
-        function stopScan() {
-            log('Stopping scan...');
-            scan.stop();
-            log('Stopped.  scan.active = ' + scan.active);
-            debugger;
-        }
+        log('Watching advertisements from "' + device.name + '"...');
+        await device.watchAdvertisements();
+
+
+
     } catch (error) {
         log('Argh! ' + error);
         console.log('Argh! ' + error);
