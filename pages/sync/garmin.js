@@ -104,7 +104,16 @@ export default function Garmin() {
                     URL.revokeObjectURL(href);
                 })
                 .catch(error => {
+                    let errorMessage = error?.response?.data;
+                    if (errorMessage == undefined && error) {
+                        errorMessage = `${error.code} ${error.message}`
+                        if (error?.code === 'ERR_NETWORK') {
+                            errorMessage = "Network error, check your connection, or use VPN";
+                        }
+                    }
                     console.log(error);
+                    alert(`${errorMessage}`);
+
                 });
 
         }
@@ -152,15 +161,22 @@ export default function Garmin() {
                 })
                 .catch(error => {
                     console.log(error);
-                    const errorMessage = error?.response?.data;
+                    let errorMessage = error?.response?.data;
                     if (errorMessage && errorMessage.includes('401 (Unauthorized)')) {
                         clearTokens();
+                    }
+                    if (errorMessage == undefined && error) {
+                        errorMessage = `${error.code} ${error.message}`
+                        if (error?.code === 'ERR_NETWORK') {
+                            errorMessage = "Network error, check your connection, or use VPN";
+                        }
                     }
                     alert(`${errorMessage}`);
                 });
 
         }
         catch (err) {
+            debugger;
             console.log(err);
             alert("Error, check console");
         }
