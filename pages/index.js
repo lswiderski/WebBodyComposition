@@ -4,7 +4,7 @@ import Link from 'next/link'
 export default function Home() {
   return (
     <>
-      <div className='max-w-sm'>
+      <div className='max-w-sm mx-auto'>
         <div>
           <h1 className='text-3xl font-bold text-center'>Web Body Composition</h1>
         </div>
@@ -18,6 +18,13 @@ export default function Home() {
               type="button"
               className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
             >  Mi Scale Scanner
+            </button>
+          </Link>
+          <Link href="/cloud/xiaomiCloud" passHref className='m-5 w-full mr-auto ml-auto'>
+            <button
+              type="button"
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
+            >  Mi Cloud Connector
             </button>
           </Link>
           <Link href="/sync/garmin" passHref className='m-5 w-full mr-auto ml-auto'>
