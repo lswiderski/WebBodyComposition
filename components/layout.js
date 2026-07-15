@@ -17,8 +17,8 @@ export default function Layout({ children }) {
             </Head>
             <div className='flex flex-col h-screen justify-between'>
                 <Navbar />
-                <main className='flex '>
-                    <div className='ml-auto mr-auto'>
+                <main className='flex w-full justify-center'>
+                    <div className='w-full px-4'>
                         {children}
                     </div>
                 </main>
