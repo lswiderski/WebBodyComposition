@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import useLocalStorageState from 'use-local-storage-state';
@@ -16,7 +16,10 @@ const regionOptions = [
 const modelOptions = [
     { value: 'yunmai.scales.ms104', label: 'S400 - yunmai.scales.ms104' },
 ];
-const weightEndpoint = 'https://localhost:7046/weights';
+
+const serverUrl = 'https://localhost:7046';
+const weightEndpoint = `${serverUrl}/weights`;
+const loginEndpoint = `${serverUrl}/login`;
 
 export default function XiaomiCloud() {
     const router = useRouter();
@@ -34,8 +37,65 @@ export default function XiaomiCloud() {
         defaultValue: modelOptions[0].value,
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isGettingPassToken, setIsGettingPassToken] = useState(false);
+    const [isPollingPassToken, setIsPollingPassToken] = useState(false);
     const [message, setMessage] = useState('');
+    const [loginSessionId, setLoginSessionId] = useState('');
+    const [loginUrl, setLoginUrl] = useState('');
+    const [qrCodeBase64, setQrCodeBase64] = useState('');
+    const [pollingEndpoint, setPollingEndpoint] = useState('');
     const [weightRecords, setWeightRecords] = useState([]);
+    const loginPollingControllerRef = useRef(null);
+
+    const isGetMeasurementsEnabled = userId.trim() !== '' && passToken.trim() !== '';
+
+    const sleep = (delayMs, signal) => new Promise((resolve, reject) => {
+        if (signal?.aborted) {
+            const abortError = new Error('Login polling cancelled.');
+            abortError.name = 'AbortError';
+            reject(abortError);
+            return;
+        }
+
+        const timeoutId = setTimeout(() => {
+            signal?.removeEventListener('abort', handleAbort);
+            resolve();
+        }, delayMs);
+
+        const handleAbort = () => {
+            clearTimeout(timeoutId);
+            const abortError = new Error('Login polling cancelled.');
+            abortError.name = 'AbortError';
+            reject(abortError);
+        };
+
+        signal?.addEventListener('abort', handleAbort, { once: true });
+    });
+
+    const clearLoginChallenge = () => {
+        setLoginSessionId('');
+        setLoginUrl('');
+        setQrCodeBase64('');
+        setPollingEndpoint('');
+    };
+
+    const cancelPassTokenPolling = () => {
+        loginPollingControllerRef.current?.abort();
+    };
+
+    const readJsonResponse = async (response) => {
+        const responseText = await response.text();
+
+        if (!responseText) {
+            return {};
+        }
+
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return responseText;
+        }
+    };
 
     const parseWeightRecords = (responseValue) => {
         if (typeof responseValue !== 'string') {
@@ -99,6 +159,114 @@ export default function XiaomiCloud() {
             setMessage(error.message || 'Unable to get measurements.');
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const normalizeLoginChallenge = (loginResponse) => ({
+        sessionId: loginResponse?.sessionid ?? loginResponse?.sessionId ?? '',
+        loginUrl: loginResponse?.loginUrl ?? '',
+        qrCodeBase64: loginResponse?.qrCodeBase64 ?? loginResponse?.qrCode ?? '',
+        pollingEndpoint: loginResponse?.pollingEndpoint ?? '',
+    });
+
+    const pollForPassToken = async (endpoint, signal) => {
+        for (let attempt = 1; attempt <= 10; attempt += 1) {
+            if (signal?.aborted) {
+                const abortError = new Error('Login polling cancelled.');
+                abortError.name = 'AbortError';
+                throw abortError;
+            }
+
+            const response = await fetch(endpoint, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                },
+                signal,
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || `Polling failed with status ${response.status}`);
+            }
+
+            const pollResponse = await readJsonResponse(response);
+            const pollStatus = pollResponse?.status ?? '';
+
+            if (pollStatus && pollStatus !== 'pending') {
+                return pollResponse;
+            }
+
+            if (attempt < 10) {
+                await sleep(2000, signal);
+            }
+        }
+
+        throw new Error('Timed out waiting for Xiaomi login to complete.');
+    };
+
+    const getPassToken = async () => {
+        const controller = new AbortController();
+
+        loginPollingControllerRef.current?.abort();
+        loginPollingControllerRef.current = controller;
+
+        setIsGettingPassToken(true);
+        setIsPollingPassToken(true);
+        setMessage('');
+        clearLoginChallenge();
+
+        try {
+            const response = await fetch(loginEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify({
+                    UserId: Number(userId),
+                    Region: region,
+                    Model: model,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || `Request failed with status ${response.status}`);
+            }
+
+            const loginResponse = normalizeLoginChallenge(await readJsonResponse(response));
+            setLoginSessionId(loginResponse.sessionId);
+            setLoginUrl(loginResponse.loginUrl);
+            setQrCodeBase64(loginResponse.qrCodeBase64);
+            setPollingEndpoint(loginResponse.pollingEndpoint);
+
+            const pollResponse = await pollForPassToken(`${serverUrl}${loginResponse.pollingEndpoint}`, controller.signal);
+
+            if (pollResponse?.status === 'completed') {
+                if (pollResponse.userId !== undefined && pollResponse.userId !== null) {
+                    setUserId(String(pollResponse.userId));
+                }
+
+                if (pollResponse.passToken !== undefined && pollResponse.passToken !== null) {
+                    setPassToken(String(pollResponse.passToken));
+                }
+
+                setMessage('Pass token retrieved successfully.');
+            } else {
+                setMessage(`Login finished with status: ${pollResponse?.status ?? 'unknown'}`);
+            }
+        } catch (error) {
+            setMessage(error?.name === 'AbortError'
+                ? 'Login polling cancelled.'
+                : error.message || 'Unable to get pass token.');
+        } finally {
+            clearLoginChallenge();
+            setIsGettingPassToken(false);
+            setIsPollingPassToken(false);
+            if (loginPollingControllerRef.current === controller) {
+                loginPollingControllerRef.current = null;
+            }
         }
     };
 
@@ -175,71 +343,124 @@ export default function XiaomiCloud() {
 
                     <h1 className='text-2xl font-bold text-center mb-5'>Mi Cloud Connector</h1>
 
-                    <form id='xiaomi-cloud-form' onSubmit={submitMeasurements} className='space-y-4 mt-10'>
-                        <label className='block'>
-                            <span className='text-gray-700'>User ID</span>
-                            <input
-                                type='number'
-                                name='userId'
-                                value={userId}
-                                onChange={(e) => setUserId(e.target.value)}
-                                className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
-                                placeholder='123456789'
-                            />
-                        </label>
+                    {!isPollingPassToken ? (
+                        <form id='xiaomi-cloud-form' onSubmit={submitMeasurements} className='space-y-4 mt-10'>
+                            <label className='block'>
+                                <span className='text-gray-700'>User ID</span>
+                                <input
+                                    type='number'
+                                    name='userId'
+                                    value={userId}
+                                    onChange={(e) => setUserId(e.target.value)}
+                                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+                                    placeholder='123456789'
+                                />
+                            </label>
 
-                        <label className='block'>
-                            <span className='text-gray-700'>Pass Token</span>
-                            <textarea
-                                name='passToken'
-                                rows={4}
-                                value={passToken}
-                                onChange={(e) => setPassToken(e.target.value)}
-                                className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
-                                placeholder='Paste pass token here'
-                            />
-                        </label>
+                            <label className='block'>
+                                <span className='text-gray-700'>Pass Token</span>
+                                <textarea
+                                    name='passToken'
+                                    rows={4}
+                                    value={passToken}
+                                    onChange={(e) => setPassToken(e.target.value)}
+                                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+                                    placeholder='Paste pass token here'
+                                />
+                            </label>
 
-                        <label className='block'>
-                            <span className='text-gray-700'>Region</span>
-                            <select
-                                name='region'
-                                value={region}
-                                onChange={(e) => setRegion(e.target.value)}
-                                className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
-                            >
-                                {regionOptions.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.value} - {option.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
-
-                        <label className='block'>
-                            <span className='text-gray-700'>Model</span>
-                            <input
-                                type='text'
-                                name='model'
-                                list='xiaomi-model-options'
-                                value={model}
-                                onChange={(e) => setModel(e.target.value)}
-                                className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
-                                placeholder='Select a model or type your own'
-                            />
-                            <datalist id='xiaomi-model-options'>
-                                {modelOptions.map((option) => (
-                                    <option key={option.value} value={option.value} label={option.label} />
-                                ))}
-                            </datalist>
-                        </label>
-
-                        {message && (
-                            <div className='text-sm text-center text-gray-700 whitespace-pre-wrap'>
-                                {message}
+                            <div>
+                                <button
+                                    type='button'
+                                    onClick={getPassToken}
+                                    disabled={isGettingPassToken || isSubmitting}
+                                    className='bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white font-bold py-2 px-4 rounded'
+                                >
+                                    {isGettingPassToken ? 'Getting pass token...' : 'Get Pass Token'}
+                                </button>
                             </div>
-                        )}
-                    </form>
+
+                            <label className='block'>
+                                <span className='text-gray-700'>Region</span>
+                                <select
+                                    name='region'
+                                    value={region}
+                                    onChange={(e) => setRegion(e.target.value)}
+                                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+                                >
+                                    {regionOptions.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.value} - {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
+
+                            <label className='block'>
+                                <span className='text-gray-700'>Model</span>
+                                <input
+                                    type='text'
+                                    name='model'
+                                    list='xiaomi-model-options'
+                                    value={model}
+                                    onChange={(e) => setModel(e.target.value)}
+                                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+                                    placeholder='Select a model or type your own'
+                                />
+                                <datalist id='xiaomi-model-options'>
+                                    {modelOptions.map((option) => (
+                                        <option key={option.value} value={option.value} label={option.label} />
+                                    ))}
+                                </datalist>
+                            </label>
+
+                            {message && (
+                                <div className='text-sm text-center text-gray-700 whitespace-pre-wrap'>
+                                    {message}
+                                </div>
+                            )}
+                        </form>
+                    ) : (
+                        <div className='mt-10 space-y-4 rounded-xl border border-gray-200 bg-gray-50 p-4'>
+                            <div className='flex items-center justify-between gap-4'>
+                                <div>
+                                    <h2 className='text-lg font-semibold text-gray-900'>Waiting for Xiaomi login</h2>
+                                    <p className='text-sm text-gray-600'>Scan the QR code or open the login link, then wait for polling to finish.</p>
+                                </div>
+                            </div>
+
+                            {loginSessionId && (
+                                <div className='text-xs text-gray-500'>Session ID: {loginSessionId}</div>
+                            )}
+                            {qrCodeBase64 && (
+                                <div className='flex justify-center'>
+                                    <img
+                                        src={`data:image/png;base64,${qrCodeBase64}`}
+                                        alt='Xiaomi login QR code'
+                                        className='max-w-full rounded-lg border border-gray-200 bg-white p-2'
+                                    />
+                                </div>
+                            )}
+                            {loginUrl && (
+                                <div className='break-all text-center text-sm'>
+                                    <a
+                                        href={loginUrl}
+                                        target='_blank'
+                                        rel='noreferrer'
+                                        className='font-semibold text-blue-700 underline'
+                                    >
+                                        {loginUrl}
+                                    </a>
+                                </div>
+                            )}
+                            {pollingEndpoint && (
+                                <div className='text-xs text-gray-500'>Polling endpoint: {pollingEndpoint}</div>
+                            )}
+                            <div className='text-sm text-center text-gray-700 whitespace-pre-wrap'>
+                                {message || 'Polling for pass token...'}
+                            </div>
+                        </div>
+                    )}
 
                     {weightRecords.length > 0 && (
                         <div className='mt-10 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm'>
@@ -301,14 +522,24 @@ export default function XiaomiCloud() {
                             </button>
                         </Link>
 
-                        <button
-                            form='xiaomi-cloud-form'
-                            type='submit'
-                            disabled={isSubmitting}
-                            className='bg-blue-500 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
-                        >
-                            {isSubmitting ? 'Getting measurements...' : 'Get Measurements'}
-                        </button>
+                        {isPollingPassToken ? (
+                            <button
+                                type='button'
+                                onClick={cancelPassTokenPolling}
+                                className='bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-5 ml-3'
+                            >
+                                Cancel Login
+                            </button>
+                        ) : (
+                            <button
+                                form='xiaomi-cloud-form'
+                                type='submit'
+                                disabled={!isGetMeasurementsEnabled || isSubmitting || isGettingPassToken}
+                                className='bg-blue-500 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
+                            >
+                                {isSubmitting ? 'Getting measurements...' : 'Get Measurements'}
+                            </button>
+                        )}
 
                     </div>
                 </div>
