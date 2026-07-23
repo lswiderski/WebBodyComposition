@@ -390,7 +390,7 @@ export default function XiaomiCloud() {
                             </div>
 
                             <label className='block'>
-                                <span className='text-gray-700'>Region</span>
+                                <span className='text-gray-700'>Account region</span>
                                 <select
                                     name='region'
                                     value={region}
@@ -406,7 +406,7 @@ export default function XiaomiCloud() {
                             </label>
 
                             <label className='block'>
-                                <span className='text-gray-700'>Model</span>
+                                <span className='text-gray-700'>Scale model</span>
                                 <select
                                     name='model'
                                     value={model}
@@ -521,7 +521,7 @@ export default function XiaomiCloud() {
 
                     {weightRecords.length === 0 && message && !isSubmitting && (
                         <div className='mt-10 rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 py-8 text-center text-sm text-gray-500'>
-                            No parsed records to display yet.
+                            No parsed records to display yet. Please get measurements first.
                         </div>
                     )}
 
