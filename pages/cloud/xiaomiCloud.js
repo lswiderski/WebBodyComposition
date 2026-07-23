@@ -15,7 +15,15 @@ const regionOptions = [
 
 const modelOptions = [
     { value: 'yunmai.scales.ms104', label: 'S400 - yunmai.scales.ms104' },
+    { value: 'yunmai.scales.ms103', label: 'S400 - yunmai.scales.ms103' },
+    { value: 'yunmai.scales.ms107', label: 'S400 - yunmai.scales.ms107' },
+    { value: 'yunmai.scales.ms106', label: 'S200 - yunmai.scales.ms106' },
+    { value: 'xiaomi.scales.ms116', label: 'S800 - xiaomi.scales.ms116' },
+
+
 ];
+
+const defaultModel = modelOptions[0].value;
 
 //const serverUrl = 'https://localhost:7046';
 const serverUrl = 'http://grzegorz366.mikrus.xyz:20366';
@@ -35,7 +43,7 @@ export default function XiaomiCloud() {
         defaultValue: 'de',
     });
     const [model, setModel] = useLocalStorageState('xiaomiCloud.model', {
-        defaultValue: modelOptions[0].value,
+        defaultValue: defaultModel,
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isGettingPassToken, setIsGettingPassToken] = useState(false);
@@ -399,20 +407,23 @@ export default function XiaomiCloud() {
 
                             <label className='block'>
                                 <span className='text-gray-700'>Model</span>
-                                <input
-                                    type='text'
+                                <select
                                     name='model'
-                                    list='xiaomi-model-options'
                                     value={model}
                                     onChange={(e) => setModel(e.target.value)}
                                     className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
-                                    placeholder='Select a model or type your own'
-                                />
-                                <datalist id='xiaomi-model-options'>
+                                >
+                                    {!modelOptions.some((option) => option.value === model) && model && (
+                                        <option value={model}>
+                                            {model} (saved)
+                                        </option>
+                                    )}
                                     {modelOptions.map((option) => (
-                                        <option key={option.value} value={option.value} label={option.label} />
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
                                     ))}
-                                </datalist>
+                                </select>
                             </label>
 
                             {message && (
