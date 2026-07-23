@@ -17,7 +17,8 @@ const modelOptions = [
     { value: 'yunmai.scales.ms104', label: 'S400 - yunmai.scales.ms104' },
 ];
 
-const serverUrl = 'https://localhost:7046';
+//const serverUrl = 'https://localhost:7046';
+const serverUrl = 'http://grzegorz366.mikrus.xyz:20366';
 const weightEndpoint = `${serverUrl}/weights`;
 const loginEndpoint = `${serverUrl}/login`;
 
