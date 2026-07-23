@@ -26,7 +26,7 @@ const modelOptions = [
 const defaultModel = modelOptions[0].value;
 
 //const serverUrl = 'https://localhost:7046';
-const serverUrl = 'http://grzegorz366.mikrus.xyz:20366';
+const serverUrl = 'https://grzegorz366-20366.wykr.es';
 const weightEndpoint = `${serverUrl}/weights`;
 const loginEndpoint = `${serverUrl}/login`;
 
