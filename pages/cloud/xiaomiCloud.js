@@ -25,11 +25,12 @@ const modelOptions = [
 ];
 
 const defaultModel = modelOptions[0].value;
-
+//const serverUrl = 'https://grzegorz366-20366.wykr.es';
 //const serverUrl = 'https://localhost:7046';
-const serverUrl = 'https://grzegorz366-20366.wykr.es';
-const weightEndpoint = `${serverUrl}/weights`;
-const loginEndpoint = `${serverUrl}/login`;
+const serverUrl = 'https://frog01-20364.wykr.es';
+const weightEndpoint = `${serverUrl}/xiaomi/weights`;
+const loginEndpoint = `${serverUrl}/xiaomi/login`;
+const rawWeightEndpoint = `${serverUrl}/xiaomi/rawweights`;
 
 export default function XiaomiCloud() {
     const router = useRouter();
@@ -46,6 +47,7 @@ export default function XiaomiCloud() {
     const [model, setModel] = useLocalStorageState('xiaomiCloud.model', {
         defaultValue: defaultModel,
     });
+    const [getDebugInfo, setGetDebugInfo] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isGettingPassToken, setIsGettingPassToken] = useState(false);
     const [isPollingPassToken, setIsPollingPassToken] = useState(false);
@@ -55,6 +57,7 @@ export default function XiaomiCloud() {
     const [qrCodeBase64, setQrCodeBase64] = useState('');
     const [pollingEndpoint, setPollingEndpoint] = useState('');
     const [weightRecords, setWeightRecords] = useState([]);
+    const [rawResponse, setRawResponse] = useState('');
     const loginPollingControllerRef = useRef(null);
 
     const isGetMeasurementsEnabled = userId.trim() !== '' && passToken.trim() !== '';
@@ -135,9 +138,10 @@ export default function XiaomiCloud() {
         setIsSubmitting(true);
         setMessage('');
         setWeightRecords([]);
+        setRawResponse('');
 
         try {
-            const response = await fetch(weightEndpoint, {
+            const response = await fetch(getDebugInfo ? rawWeightEndpoint : weightEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -153,6 +157,16 @@ export default function XiaomiCloud() {
             const responseText = await response.text();
             if (!response.ok) {
                 throw new Error(responseText || `Request failed with status ${response.status}`);
+            }
+
+            if (getDebugInfo) {
+                try {
+                    setRawResponse(JSON.stringify(JSON.parse(responseText), null, 2));
+                } catch {
+                    setRawResponse(responseText);
+                }
+                setMessage('Loaded raw Xiaomi response.');
+                return;
             }
 
             const parsedRecords = parseWeightRecords(responseText);
@@ -251,7 +265,7 @@ export default function XiaomiCloud() {
             setQrCodeBase64(loginResponse.qrCodeBase64);
             setPollingEndpoint(loginResponse.pollingEndpoint);
 
-            const pollResponse = await pollForPassToken(`${serverUrl}${loginResponse.pollingEndpoint}`, controller.signal);
+            const pollResponse = await pollForPassToken(`${serverUrl}/xiaomi${loginResponse.pollingEndpoint}`, controller.signal);
 
             if (pollResponse?.status === 'completed') {
                 if (pollResponse.userId !== undefined && pollResponse.userId !== null) {
@@ -427,6 +441,17 @@ export default function XiaomiCloud() {
                                 </select>
                             </label>
 
+                            <label className='flex items-center gap-2'>
+                                <input
+                                    type='checkbox'
+                                    name='getDebugInfo'
+                                    checked={getDebugInfo}
+                                    onChange={(e) => setGetDebugInfo(e.target.checked)}
+                                    className='rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500'
+                                />
+                                <span className='text-gray-700'>Get Debug info instead of measurements</span>
+                            </label>
+
                             {message && (
                                 <div className='text-sm text-center text-gray-700 whitespace-pre-wrap'>
                                     {message}
@@ -475,7 +500,13 @@ export default function XiaomiCloud() {
                         </div>
                     )}
 
-                    {weightRecords.length > 0 && (
+                    {getDebugInfo && rawResponse && (
+                        <pre className='mt-10 max-h-[32rem] overflow-auto whitespace-pre-wrap rounded-xl border border-gray-200 bg-gray-900 p-4 text-sm text-gray-100'>
+                            {rawResponse}
+                        </pre>
+                    )}
+
+                    {!getDebugInfo && weightRecords.length > 0 && (
                         <div className='mt-10 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm'>
                             <div className='overflow-x-auto'>
                                 <table className='min-w-full divide-y divide-gray-200 text-sm'>
@@ -520,7 +551,7 @@ export default function XiaomiCloud() {
                         </div>
                     )}
 
-                    {weightRecords.length === 0 && message && !isSubmitting && (
+                    {!getDebugInfo && weightRecords.length === 0 && message && !isSubmitting && (
                         <div className='mt-10 rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 py-8 text-center text-sm text-gray-500'>
                             No parsed records to display yet. Please get measurements first.
                         </div>
@@ -550,7 +581,9 @@ export default function XiaomiCloud() {
                                 disabled={!isGetMeasurementsEnabled || isSubmitting || isGettingPassToken}
                                 className='bg-blue-500 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
                             >
-                                {isSubmitting ? 'Getting measurements...' : 'Get Measurements'}
+                                {isSubmitting
+                                    ? (getDebugInfo ? 'Getting debug info...' : 'Getting measurements...')
+                                    : (getDebugInfo ? 'Get Debug Info' : 'Get Measurements')}
                             </button>
                         )}
 
