@@ -4,6 +4,20 @@ import axios from 'axios';
 import useLocalStorageState from 'use-local-storage-state'
 import { useBodyCompositionContext } from '../../contexts/bodycomposition.context';
 
+const formatDateTimeLocal = (value) => {
+    if (!value) {
+        return '';
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+        return '';
+    }
+
+    const pad = (part) => String(part).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
 export default function Garmin() {
     const { bodyComposition, setBodyComposition } = useBodyCompositionContext();
     const [weight, setWeight] = useState(bodyComposition.weight ?? 0);
@@ -15,6 +29,7 @@ export default function Garmin() {
     const [visceralFat, setVisceralFat] = useState(bodyComposition.visceralFat ?? 0);
     const [metabolicAge, setMetabolicAge] = useState(bodyComposition.metabolicAge ?? 0);
     const [bodyType, setBodyType] = useState(bodyComposition.bodyType ?? 0);
+    const [dateTime, setDateTime] = useState(() => formatDateTimeLocal(bodyComposition.dateTime));
     const [email, setEmail] = useLocalStorageState('email', {
         defaultValue: ''
     });
@@ -52,7 +67,7 @@ export default function Garmin() {
     const preapareApiRequest = () => {
         const payload =
         {
-            timeStamp: -1,
+            timeStamp: dateTime ? Math.floor(new Date(dateTime).getTime() / 1000) : -1,
             weight: parseFloat(weight),
             percentFat: parseFloat(fat ?? 0),
             percentHydration: parseFloat(waterPercentage ?? 0),
@@ -381,6 +396,24 @@ export default function Garmin() {
                         focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
                       "
                                 placeholder=""
+                            />
+                        </label>
+                        <label className="block">
+                            <span className="text-gray-700">Date and time</span>
+                            <input
+                                type="datetime-local"
+                                name="dateTime"
+                                value={dateTime}
+                                onChange={(e) => setDateTime(e.target.value)}
+                                className="
+                        mt-1
+                        block
+                        w-full
+                        rounded-md
+                        border-gray-300
+                        shadow-sm
+                        focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                      "
                             />
                         </label>
 

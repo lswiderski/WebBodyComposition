@@ -295,6 +295,7 @@ export default function XiaomiCloud() {
     };
 
     const mapRecordToBodyComposition = (record) => ({
+        dateTime: record.date ?? '',
         weight: record.weightKg ?? 0,
         bmi: record.bmi ?? 0,
         fat: record.bodyFat ?? 0,
