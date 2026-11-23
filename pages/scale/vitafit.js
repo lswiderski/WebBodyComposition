@@ -8,6 +8,16 @@ import { computeBodyComposition, checkInput } from '../../services/bodyCompositi
 
 const inputClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50';
 
+// Bluefy rejects with plain objects instead of DOMExceptions (shown as "2" or "[object Object]"):
+// show their whole content, plus the most likely cause.
+function describeError(e) {
+    if (e instanceof Error) return `${e.name}: ${e.message}`;
+    let raw;
+    try { raw = JSON.stringify(e); } catch { raw = undefined; }
+    return `Bluetooth error ${raw ?? String(e)}. Check that the browser is allowed to use Bluetooth `
+        + '(iOS: Settings > Privacy & Security > Bluetooth).';
+}
+
 export default function VitafitScanner() {
     const router = useRouter();
     const { setBodyComposition } = useBodyCompositionContext();
@@ -55,7 +65,7 @@ export default function VitafitScanner() {
                 });
             }
         } catch (e) {
-            setError(e.message || String(e));
+            setError(describeError(e));
         } finally {
             setScanning(false);
         }
