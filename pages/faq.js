@@ -18,14 +18,8 @@ export default function Faq() {
                                 className="ml-auto mr-auto" /></a>
                     </li>
                     <li className='mb-5'>
-                        <div className='font-bold'>2. Android Application</div>
-                        <div >For Android check native application MiScale Exporter</div>
-                        <a href="https://play.google.com/store/apps/details?id=com.lukaszswiderski.MiScaleExporter" target="_blank">
-                            <Image src="https://play.google.com/intl/en_US/badges/images/generic/en_badge_web_generic.png"
-                                alt="Google Play MiScale Exporter"
-                                height="40"
-                                width="150"
-                                className="ml-auto mr-auto" /></a>
+                        <div className='font-bold'>2. Android</div>
+                        <div>On Android use Chrome, which supports Web Bluetooth.</div>
                     </li>
                     <li className='mb-5'>
                         <div className='font-bold'>3. Coffee</div>
@@ -40,30 +34,26 @@ export default function Faq() {
                     </li>
                     <li className='mb-5'>
                         <div className='font-bold'>4. How to connect to the scale</div>
-                        <div>Set the correct age/height/gender values. Start scan and connect to your scale called: MIBCS Measure yourself. The scale is active for up to 15 minutes after measurement.</div>
+                        <div>Set your height, age, sex and athlete mode as in the Vitafit app. Step on the scale barefoot, tap &quot;Connect to scale&quot; and pick &quot;Vitafit Body Fat&quot;. The Vitafit app must not have Bluetooth access, or it will connect to the scale first.</div>
                     </li>
                     <li className='mb-5'>
                         <div className='font-bold'>5. How It works</div>
                         <div>This App pass your data, email and password to Garmin Cloud via external API server. The API does not store or log anything, it&apos;s just a middleware between this App and Garmin services.</div>
                     </li>
                     <li className='mb-5'>
-                        <div className='font-bold'>6. Strange results? (Like 10kg only)</div>
-                        <div>If you have the Mi Body Composition Scale 2. Disable the &apos;Weight small object&apos; option in Zepp Life</div>
+                        <div className='font-bold'>6. Results different from the Vitafit app</div>
+                        <div>Check that height, age, sex and athlete mode are identical in both apps. This app uses the same algorithm as the Vitafit app, so the results should match.</div>
                     </li>
                     <li className='mb-5'>
-                        <div className='font-bold'>7. Results different from Zepp Life</div>
-                        <div>Please check the age/height/gender parameters - should be identical in both apps. But even then, the values may be slightly different because we do not use the exact algorithm used by Xiaomi, but an alternative open source algorithm.</div>
-                    </li>
-                    <li className='mb-5'>
-                        <div className='font-bold'>8. Cannot Sync. Missing Cookies</div>
+                        <div className='font-bold'>7. Cannot Sync. Missing Cookies</div>
                         <div>You probably have 2FA enabled. It&apos;s not supported. Please turn it off if you want to use this application.</div>
                     </li>
                     <li className='mb-5'>
-                        <div className='font-bold'>9. Garmin and Xiaomi</div>
-                        <div>This application is an open source community project and I have no affiliation with Garmin or Xiaomi. You use it at your own risk. You can always check out the source code on Github.</div>
+                        <div className='font-bold'>8. Garmin and Vitafit</div>
+                        <div>This application is an open source community project with no affiliation with Garmin or Vitafit. You use it at your own risk. You can always check out the source code on Github.</div>
                     </li>
                     <li className='mb-5'>
-                        <div className='font-bold'>10. Feedback & Contact</div>
+                        <div className='font-bold'>9. Feedback & Contact</div>
                         <div>If you found a bug, need a feature or have an idea, share it with me at the project repository.</div>
                         <Link href="https://github.com/lswiderski/WebBodyComposition" target='_blank' className='m-5 w-full mr-auto ml-auto'>
                             <button

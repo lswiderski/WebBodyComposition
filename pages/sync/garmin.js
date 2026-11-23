@@ -3,18 +3,18 @@ import Link from 'next/link'
 import axios from 'axios';
 import useLocalStorageState from 'use-local-storage-state'
 import { useBodyCompositionContext } from '../../contexts/bodycomposition.context';
+import { bodyCompositionWebApiUploadUrl } from '../../services/config';
 
 export default function Garmin() {
     const { bodyComposition, setBodyComposition } = useBodyCompositionContext();
-    const [weight, setWeight] = useState(bodyComposition.weight ?? 0);
+    const [weightKg, setWeightKg] = useState(bodyComposition.weightKg ?? 0);
     const [bmi, setBmi] = useState(bodyComposition.bmi ?? 0);
-    const [fat, setFat] = useState(bodyComposition.fat ?? 0);
-    const [muscleMass, setMuscleMass] = useState(bodyComposition.muscleMass ?? 0);
+    const [fatPercentage, setFatPercentage] = useState(bodyComposition.fatPercentage ?? 0);
+    const [skeletalMuscleKg, setSkeletalMuscleKg] = useState(bodyComposition.skeletalMuscleKg ?? 0);
     const [waterPercentage, setWaterPercentage] = useState(bodyComposition.waterPercentage ?? 0);
-    const [boneMass, setBoneMass] = useState(bodyComposition.boneMass ?? 0);
+    const [boneKg, setBoneKg] = useState(bodyComposition.boneKg ?? 0);
     const [visceralFat, setVisceralFat] = useState(bodyComposition.visceralFat ?? 0);
     const [metabolicAge, setMetabolicAge] = useState(bodyComposition.metabolicAge ?? 0);
-    const [bodyType, setBodyType] = useState(bodyComposition.bodyType ?? 0);
     const [email, setEmail] = useLocalStorageState('email', {
         defaultValue: ''
     });
@@ -50,16 +50,14 @@ export default function Garmin() {
     }
 
     const preapareApiRequest = () => {
-        const bodyFatFree = parseFloat(weight) * (1 - (parseFloat(fat ?? 0))*0.01);
-        const protein = bodyFatFree * (parseFloat(muscleMass ?? 0) * 0.01);
         const payload =
         {
             timeStamp: -1,
-            weight: parseFloat(weight),
-            percentFat: parseFloat(fat ?? 0),
+            weight: parseFloat(weightKg ?? 0),
+            percentFat: parseFloat(fatPercentage ?? 0),
             percentHydration: parseFloat(waterPercentage ?? 0),
-            boneMass: parseFloat(boneMass ?? 0),
-            muscleMass: protein ?? 0,
+            boneMass: parseFloat(boneKg ?? 0),
+            muscleMass: parseFloat(skeletalMuscleKg ?? 0),
             visceralFatRating: parseFloat(visceralFat ?? 0),
             metabolicAge: parseFloat(metabolicAge ?? 0),
             bodyMassIndex: parseFloat(bmi ?? 0),
@@ -88,7 +86,7 @@ export default function Garmin() {
             };
 
             await axios
-                .post('https://frog01-20364.wykr.es/upload', payload, axiosConfig)
+                .post(bodyCompositionWebApiUploadUrl(), payload, axiosConfig)
                 .then(response => {
                     // create file link in browser's memory
                     const href = URL.createObjectURL(response.data);
@@ -111,7 +109,7 @@ export default function Garmin() {
         }
         catch (err) {
             console.log(err);
-            alert("Error, check console");
+            alert(`Error: ${err.message}`);
         }
     }
 
@@ -128,7 +126,7 @@ export default function Garmin() {
             };
 
             await axios
-                .post('https://frog01-20364.wykr.es/upload', payload, axiosConfig)
+                .post(bodyCompositionWebApiUploadUrl(), payload, axiosConfig)
                 .then(response => {
                     console.log(response);
                     if (saveToken && response.data.uploadResult.accessToken && response.data.uploadResult.tokenSecret) {
@@ -163,7 +161,7 @@ export default function Garmin() {
         }
         catch (err) {
             console.log(err);
-            alert("Error, check console");
+            alert(`Error: ${err.message}`);
         }
     };
 
@@ -176,14 +174,14 @@ export default function Garmin() {
                         className=''>
                         <div className=' flex justify-between gap-2'>
                             <label className="block">
-                                <span className="text-gray-700">Weight (Kg)</span>
+                                <span className="text-gray-700">Weight (kg)</span>
                                 <input
                                     type="number"
-                                    name="weight"
+                                    name="weightKg"
                                     step="0.01"
                                     min={0}
-                                    value={weight}
-                                    onChange={(e) => setWeight(e.target.value)}
+                                    value={weightKg}
+                                    onChange={(e) => setWeightKg(e.target.value)}
                                     className="
                                 mt-1
                                 block
@@ -223,11 +221,11 @@ export default function Garmin() {
                                 <span className="text-gray-700">Body Fat (%)</span>
                                 <input
                                     type="number"
-                                    name="fat"
+                                    name="fatPercentage"
                                     step="0.01"
                                     min={0}
-                                    value={fat}
-                                    onChange={(e) => setFat(e.target.value)}
+                                    value={fatPercentage}
+                                    onChange={(e) => setFatPercentage(e.target.value)}
                                     className="
                         mt-1
                         block
@@ -241,14 +239,14 @@ export default function Garmin() {
                                 />
                             </label>
                             <label className="block">
-                                <span className="text-gray-700">Muscle Mass (Protein %)</span>
+                                <span className="text-gray-700">Skeletal Muscle Mass (kg)</span>
                                 <input
                                     type="number"
-                                    name="muscleMass"
+                                    name="skeletalMuscleKg"
                                     step="0.01"
                                     min={0}
-                                    value={muscleMass}
-                                    onChange={(e) => setMuscleMass(e.target.value)}
+                                    value={skeletalMuscleKg}
+                                    onChange={(e) => setSkeletalMuscleKg(e.target.value)}
                                     className="
                         mt-1
                         block
@@ -284,14 +282,14 @@ export default function Garmin() {
                                 />
                             </label>
                             <label className="block">
-                                <span className="text-gray-700">Bone Mass (Kg)</span>
+                                <span className="text-gray-700">Bone Mass (kg)</span>
                                 <input
                                     type="number"
-                                    name="boneMass"
+                                    name="boneKg"
                                     step="0.01"
                                     min={0}
-                                    value={boneMass}
-                                    onChange={(e) => setBoneMass(e.target.value)}
+                                    value={boneKg}
+                                    onChange={(e) => setBoneKg(e.target.value)}
                                     className="
                         mt-1
                         block
@@ -348,26 +346,6 @@ export default function Garmin() {
                                 />
                             </label>
                         </div>
-                        {/* <label className="block">
-                            <span className="text-gray-700">Physique Raiting</span>
-                            <input
-                                type="number"
-                                name="bodyType"
-                                min={0}
-                                value={bodyType}
-                                onChange={(e) => setBodyType(e.target.value)}
-                                className="
-                        mt-1
-                        block
-                        w-full
-                        rounded-md
-                        border-gray-300
-                        shadow-sm
-                        focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
-                      "
-                                placeholder=""
-                            />
-                        </label> */}
 
 
                         {!isTokenSaved && <label className="block mt-10">
