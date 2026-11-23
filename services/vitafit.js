@@ -6,9 +6,10 @@
 //   0x33 handshake (sets TOKEN), 0x10 weight, 0x11 impedance, 0x15 body metrics (sent empty).
 
 const DEVICE_NAME = 'Vitafit Body Fat';
-const SERVICE = 0xfff0;
-const NOTIFY_CHAR = 0xfff1;
-const WRITE_CHAR = 0xfff2;
+// Full 128-bit UUIDs, the most portable form (instead of the 16-bit integer aliases like 0xfff0).
+const SERVICE = '0000fff0-0000-1000-8000-00805f9b34fb';
+const NOTIFY_CHAR = '0000fff1-0000-1000-8000-00805f9b34fb';
+const WRITE_CHAR = '0000fff2-0000-1000-8000-00805f9b34fb';
 
 const CMD_WEIGHT = 0x10;
 const CMD_IMPEDANCE = 0x11;

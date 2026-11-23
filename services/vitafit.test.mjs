@@ -33,7 +33,7 @@ function fakeBluetooth(rxFrames) {
     const device = {
         gatt: {
             connected: true,
-            connect: async () => ({ getPrimaryService: async () => ({ getCharacteristic: async (u) => (u === 0xfff1 ? notifyChar : writeChar) }) }),
+            connect: async () => ({ getPrimaryService: async () => ({ getCharacteristic: async (u) => (u === '0000fff1-0000-1000-8000-00805f9b34fb' ? notifyChar : writeChar) }) }),
             disconnect() { this.connected = false; },
         },
         addEventListener: () => {},
