@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link'
 
 export default function Home() {
@@ -33,15 +32,6 @@ export default function Home() {
             > Github Project Repository
             </button>
           </Link>
-          {/* <div className="mr-auto ml-auto mt-5" >
-            <a href="https://www.buymeacoffee.com/lukaszswiderski" target="_blank" >
-              <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png"
-                alt="Buy Me A Coffee"
-                height="41"
-                width="174"
-              />
-            </a>
-          </div> */}
         </div>
       </div>
     </>
