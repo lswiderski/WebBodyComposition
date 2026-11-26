@@ -19,13 +19,6 @@ export default function Home() {
             > Vitafit Scale Scanner
             </button>
           </Link>
-          <Link href="/sync/garmin" passHref className='m-5 w-full mr-auto ml-auto'>
-            <button
-              type="submit"
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
-            > Sync to Garmin and/or Intervals
-            </button>
-          </Link>
           <Link href="/faq" passHref className='m-5 w-full mr-auto ml-auto'>
             <button
               type="submit"
