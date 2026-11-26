@@ -22,7 +22,7 @@ export default function BodyComposition() {
         let value;
         value = (localStorage.getItem("syncToGarmin") || false) === 'true'
         setSyncToGarmin(value)
-    }, [])
+    }, [setSyncToGarmin])
     const checkSyncToGarminHandler = () => {
         localStorage.setItem("syncToGarmin", !syncToGarmin)
         setSyncToGarmin(!syncToGarmin)
@@ -48,7 +48,7 @@ export default function BodyComposition() {
         let value;
         value = (localStorage.getItem("saveGarminToken") || false) === 'true'
         setSaveGarminToken(value)
-    }, [])
+    }, [setSaveGarminToken])
     const checkSaveGarminTokenHandler = () => {
         localStorage.setItem("saveGarminToken", !saveGarminToken)
         setSaveGarminToken(!saveGarminToken)
@@ -73,7 +73,7 @@ export default function BodyComposition() {
         let value;
         value = (localStorage.getItem("syncToIntervals") || false) === 'true'
         setSyncToIntervals(value)
-    }, [])
+    }, [setSyncToIntervals])
     const checkSyncToIntervalsHandler = () => {
         localStorage.setItem("syncToIntervals", !syncToIntervals)
         setSyncToIntervals(!syncToIntervals)
@@ -90,7 +90,7 @@ export default function BodyComposition() {
         let value;
         value = (localStorage.getItem("saveIntervalsApiKey") || false) === 'true'
         setSaveIntervalsApiKey(value)
-    }, [])
+    }, [setSaveIntervalsApiKey])
     const checkSaveIntervalsApiKeyHandler = () => {
         localStorage.setItem("saveIntervalsApiKey", !saveIntervalsApiKey)
         setSaveIntervalsApiKey(!saveIntervalsApiKey)
@@ -102,7 +102,7 @@ export default function BodyComposition() {
         let value;
         value = (localStorage.getItem("syncToAppleHealth") || false) === 'true'
         setSyncToAppleHealth(value)
-    }, [])
+    }, [setSyncToAppleHealth])
     const checkSyncToAppleHealthHandler = () => {
         localStorage.setItem("syncToAppleHealth", !syncToAppleHealth)
         setSyncToAppleHealth(!syncToAppleHealth)
