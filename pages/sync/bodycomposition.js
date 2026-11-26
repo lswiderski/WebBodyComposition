@@ -16,6 +16,7 @@ export default function BodyComposition() {
     const [boneKg, setBoneKg] = useState(bodyComposition.boneKg ?? 0);
     const [visceralFat, setVisceralFat] = useState(bodyComposition.visceralFat ?? 0);
     const [metabolicAge, setMetabolicAge] = useState(bodyComposition.metabolicAge ?? 0);
+    const [bmr, setBmr] = useState(bodyComposition.bmr ?? 0);
     const [syncToGarmin, setSyncToGarmin] = useLocalStorageState('syncToGarmin', { defaultValue: false });
     useEffect(() => {
         let value;
@@ -196,6 +197,7 @@ export default function BodyComposition() {
                     MuscleMass: payload.muscleMass,
                     VisceralFat: payload.visceralFatRating,
                     Water: payload.percentHydration,
+                    BMR: parseFloat(bmr ?? 0),
                 };
 
                 await axios
@@ -456,6 +458,29 @@ export default function BodyComposition() {
                                     min={0}
                                     value={metabolicAge}
                                     onChange={(e) => setMetabolicAge(e.target.value)}
+                                    className="
+                        mt-1
+                        block
+                        w-full
+                        rounded-md
+                        border-gray-300
+                        shadow-sm
+                        focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                      "
+                                    placeholder=""
+                                />
+                            </label>
+                        </div>
+                        <div className='flex justify-between gap-2'>
+                            <label className="block">
+                                <span className="text-gray-700">BMR (kcal)</span>
+                                <input
+                                    type="number"
+                                    name="bmr"
+                                    step="1"
+                                    min={0}
+                                    value={bmr}
+                                    onChange={(e) => setBmr(e.target.value)}
                                     className="
                         mt-1
                         block

@@ -64,6 +64,7 @@ export default function VitafitScanner() {
                     boneKg: r.boneKg.toFixed(2),
                     visceralFat: r.visceralFat,
                     metabolicAge: r.metabolicAge,
+                    bmr: r.bmr,
                 });
             }
         } catch (e) {
