@@ -4,7 +4,7 @@ Web app that reads weight and body composition from a **Vitafit VT7018 scale** (
 
 - **Garmin Connect**, through a proxy API.
 - **Intervals.icu**, as wellness data.
-- **Apple Health** (planned), through an iOS Shortcut.
+- **Apple Health**, through an iOS Shortcut.
 
 Forked from [lswiderski/WebBodyComposition](https://github.com/lswiderski/WebBodyComposition) and adapted to the Vitafit scale.
 
@@ -28,11 +28,12 @@ Web Bluetooth needs HTTPS and a compatible browser:
 
 ### Metrics
 
-| Metric | Garmin Connect | Intervals.icu | Apple Health (planned) |
+| Metric | Garmin Connect | Intervals.icu | Apple Health |
 |---|---|---|---|
 | Weight (kg) | `weight` | `weight` | Weight |
 | BMI | `bodyMassIndex` | `BMI` (custom) | Body Mass Index |
 | Body fat (%) | `percentFat` | `bodyFat` | Body Fat Percentage |
+| Lean body mass (kg) | — | — | Lean Body Mass |
 | Skeletal muscle mass (kg) | `muscleMass` | `MuscleMass` (custom) | — |
 | Body water (%) | `percentHydration` | `Water` (custom) | — |
 | Bone mass (kg) | `boneMass` | `BoneMass` (custom) | — |
@@ -90,9 +91,30 @@ To check that everything works, submit a weighing from this app and open that da
 
 If Intervals.icu also imports weight and body fat from Garmin Connect, both sources write the same fields for the same day.
 
-### Apple Health (planned)
+### Apple Health
 
-A web app cannot write to Apple Health. The plan is to hand the values to an iOS Shortcut that logs weight, BMI, body fat percentage and lean body mass. Apple Health has no fields for the other metrics.
+A web app cannot write to Apple Health, so the app hands the values to an iOS Shortcut named **Vitafit to Health**, which logs them. Apple Health has fields for weight, BMI, body fat percentage and lean body mass (weight × (1 − body fat %)); it has none for the other metrics.
+
+When **Apple Health** is checked, the app first uploads to the other selected services and then opens:
+
+```
+shortcuts://run-shortcut?name=Vitafit%20to%20Health&input=text&text={"weight":68.95,"bmi":22.26,"bodyFat":12.54,"leanBodyMass":60.3}
+```
+
+(with the JSON URL-encoded). Create the shortcut once on the iPhone:
+
+1. Open **Shortcuts**, tap **+** and name the shortcut exactly `Vitafit to Health`.
+2. Add **Get Dictionary from Input** and set its input to **Shortcut Input**.
+3. Add **Get Dictionary Value**: Get *Value* for key `weight` in *Dictionary*.
+4. Add **Log Health Sample**: type **Weight**, value *Dictionary Value*, unit **kg**.
+5. Repeat steps 3 and 4 for:
+   - key `bmi` → type **Body Mass Index**;
+   - key `bodyFat` → type **Body Fat Percentage** (the value is a percentage, e.g. 12.54);
+   - key `leanBodyMass` → type **Lean Body Mass**, unit **kg**.
+   In each step pick the *Dictionary* returned by step 2 and the *Dictionary Value* of the step just above.
+6. Run the sync once and allow the shortcut to write to Health when iOS asks.
+
+If Garmin Connect is also connected to Apple Health, weight and body fat may be logged twice for the same weighing: uncheck one of the two.
 
 ## Configuration
 

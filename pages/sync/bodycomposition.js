@@ -4,6 +4,7 @@ import axios from 'axios';
 import useLocalStorageState from 'use-local-storage-state'
 import { useBodyCompositionContext } from '../../contexts/bodycomposition.context';
 import { yagccUploadUrl, bodyCompositionWebApiUploadUrl } from '../../services/config';
+import { appleHealthShortcutUrl } from '../../services/appleHealth';
 
 export default function BodyComposition() {
     const { bodyComposition, setBodyComposition } = useBodyCompositionContext();
@@ -94,6 +95,19 @@ export default function BodyComposition() {
         setSaveIntervalsApiKey(!saveIntervalsApiKey)
     }
     const isIntervalsApiKeySaved = saveIntervalsApiKey && intervalsApiKey;
+
+    const [syncToAppleHealth, setSyncToAppleHealth] = useLocalStorageState('syncToAppleHealth', { defaultValue: false });
+    useEffect(() => {
+        let value;
+        value = (localStorage.getItem("syncToAppleHealth") || false) === 'true'
+        setSyncToAppleHealth(value)
+    }, [])
+    const checkSyncToAppleHealthHandler = () => {
+        localStorage.setItem("syncToAppleHealth", !syncToAppleHealth)
+        setSyncToAppleHealth(!syncToAppleHealth)
+    }
+
+    const anySyncTarget = syncToGarmin || syncToIntervals || syncToAppleHealth;
 
     const preapareApiRequest = () => {
         const payload =
@@ -256,6 +270,15 @@ export default function BodyComposition() {
                         }
                         alert(`${errorMessage}`);
                     });
+            }
+
+            // last, because opening the shortcut leaves the browser
+            if (syncToAppleHealth) {
+                window.location.href = appleHealthShortcutUrl({
+                    weightKg: payload.weight,
+                    bmi: payload.bodyMassIndex,
+                    fatPercentage: payload.percentFat,
+                });
             }
 
         }
@@ -447,17 +470,26 @@ export default function BodyComposition() {
                             </label>
                         </div>
 
-                        <div className="flex justify-between gap-2">
+                        <div className="flex flex-wrap justify-between gap-2">
                             <div className="mt-2">
-                                <input type="checkbox" id="syncToIntervals" checked={syncToIntervals} onChange={checkSyncToIntervalsHandler} />
-                                <label htmlFor="syncToIntervals" className="ml-2">Sync to Intervals</label>
+                                <input type="checkbox" id="syncToGarmin" checked={syncToGarmin} onChange={checkSyncToGarminHandler} />
+                                <label htmlFor="syncToGarmin" className="ml-2">Garmin</label>
                             </div>
 
                             <div className="mt-2">
-                                <input type="checkbox" id="syncToGarmin" checked={syncToGarmin} onChange={checkSyncToGarminHandler} />
-                                <label htmlFor="syncToIntervals" className="ml-2">Sync to Garmin</label>
+                                <input type="checkbox" id="syncToIntervals" checked={syncToIntervals} onChange={checkSyncToIntervalsHandler} />
+                                <label htmlFor="syncToIntervals" className="ml-2">Intervals</label>
+                            </div>
+
+                            <div className="mt-2">
+                                <input type="checkbox" id="syncToAppleHealth" checked={syncToAppleHealth} onChange={checkSyncToAppleHealthHandler} />
+                                <label htmlFor="syncToAppleHealth" className="ml-2">Apple Health</label>
                             </div>
                         </div>
+
+                        {syncToAppleHealth && <p className="mt-2 text-sm text-gray-700">
+                            Opens the &quot;Vitafit to Health&quot; iOS Shortcut, which logs weight, BMI, body fat and lean body mass.
+                        </p>}
 
                         {syncToIntervals && !isIntervalsApiKeySaved && <label className="block mt-10">
                             <span className="text-gray-700">API Key</span>
@@ -550,7 +582,9 @@ export default function BodyComposition() {
                             </Link>
                             <button
                                 type="submit"
-                                className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
+                                disabled={!anySyncTarget}
+                                title={anySyncTarget ? undefined : 'Select at least one service'}
+                                className='bg-blue-500 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
                             > Sync Data
                             </button>
                             {syncToGarmin && <div className="block text-justify">
