@@ -2,7 +2,7 @@
 // against a fake Web Bluetooth device. Run with: node --test services/vitafit.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readVitafit } from './vitafit.js';
+import { readVitafit, isVitafitName } from './vitafit.js';
 
 const bytes = (s) => new Uint8Array(s.split(' ').map((h) => parseInt(h, 16)));
 
@@ -15,7 +15,7 @@ const RX = [
     '5a 0a 26 10 02 00 00 21 1a d6 d3 aa',     // stable weight after the impedance
 ];
 
-function fakeBluetooth(rxFrames) {
+function fakeBluetooth(rxFrames, name = '\u0001Vitafit Body Fat') {
     const written = [];
     const listeners = {};
     const notifyChar = {
@@ -31,6 +31,7 @@ function fakeBluetooth(rxFrames) {
     };
     const writeChar = { writeValueWithResponse: async (v) => { written.push(Array.from(v, (b) => b.toString(16).padStart(2, '0')).join(' ')); } };
     const device = {
+        name,
         gatt: {
             connected: true,
             connect: async () => ({ getPrimaryService: async () => ({ getCharacteristic: async (u) => (u === '0000fff1-0000-1000-8000-00805f9b34fb' ? notifyChar : writeChar) }) }),
@@ -58,4 +59,16 @@ test('a weighing without impedance (socks) resolves with impedance null on timeo
     fakeBluetooth(['5a 0a 26 10 01 00 00 21 1a d6 d0 aa', '5a 0a 26 10 02 00 00 21 1a d6 d3 aa']);
     const result = await readVitafit({ timeoutMs: 100 });
     assert.deepEqual(result, { weight: 68.7, impedance: null });
+});
+
+test('the scale name is recognised despite the non-printable character in front', () => {
+    assert.ok(isVitafitName('Vitafit Body Fat'));
+    assert.ok(isVitafitName('\u0001Vitafit Body Fat'));
+    assert.ok(!isVitafitName('Fridge'));
+    assert.ok(!isVitafitName(undefined));
+});
+
+test('picking another device in the list rejects without connecting', async () => {
+    fakeBluetooth([], 'Fridge');
+    await assert.rejects(readVitafit({ timeoutMs: 100 }), /"Fridge" is not the scale/);
 });
