@@ -72,3 +72,28 @@ test('picking another device in the list rejects without connecting', async () =
     fakeBluetooth([], 'Fridge');
     await assert.rejects(readVitafit({ timeoutMs: 100 }), /"Fridge" is not the scale/);
 });
+
+test('a scale the site already knows is reconnected without opening the device list', async () => {
+    fakeBluetooth(RX);
+    const device = await navigator.bluetooth.requestDevice();
+    let listOpened = false;
+    navigator.bluetooth.requestDevice = async () => { listOpened = true; return device; };
+    navigator.bluetooth.getDevices = async () => [{ name: 'Fridge' }, device];
+    const result = await readVitafit({ timeoutMs: 2000 });
+    assert.deepEqual(result, { weight: 68.7, impedance: 487 });
+    assert.equal(listOpened, false);
+});
+
+test('if the known scale does not answer, the device list is opened', async () => {
+    fakeBluetooth(RX);
+    const device = await navigator.bluetooth.requestDevice();
+    const asleep = { name: device.name, gatt: { connect: async () => { throw new Error('not in range'); }, disconnect() {} } };
+    let listOpened = false;
+    navigator.bluetooth.requestDevice = async () => { listOpened = true; return device; };
+    navigator.bluetooth.getDevices = async () => [asleep];
+    const status = [];
+    const result = await readVitafit({ timeoutMs: 2000, onStatus: (s) => status.push(s) });
+    assert.deepEqual(result, { weight: 68.7, impedance: 487 });
+    assert.ok(listOpened);
+    assert.ok(status.includes('Could not reconnect (not in range), opening the device list'));
+});

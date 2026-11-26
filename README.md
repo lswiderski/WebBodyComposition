@@ -13,7 +13,7 @@ There is no public instance: deploy your own (see [Deployment](#deployment)).
 ## How it works
 
 1. Open the app and go to **Vitafit Scale Scanner**. Enter your height, age, sex and athlete mode, the same values as in your Vitafit app profile.
-2. Step on the scale barefoot, tap **Connect to scale** and pick "Vitafit Body Fat". The app reads the weight and the impedance.
+2. Step on the scale barefoot, tap **Connect to scale** and pick "Vitafit Body Fat". The app reads the weight and the impedance. On later weighings, if the browser remembers the scale (`navigator.bluetooth.getDevices()`), the app reconnects to it without the device list; if the scale does not answer within 8 s, the list opens as usual.
 3. The app computes the body composition with regression formulas equivalent to those of the Vitafit app, validated against real measurements. Profiles: male, female, and the athlete variant of each.
 4. Review the values in the sync form, choose where to send them and submit.
 

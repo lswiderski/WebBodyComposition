@@ -52,9 +52,50 @@ function splitFrames(buf) {
 
 const hex = (bytes) => Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join(' ');
 
-// Connects, waits for a weighing and resolves with {weight, impedance} (impedance null if not measured,
-// e.g. with socks). onStatus(text) receives progress messages and the raw frames.
-export async function readVitafit({ onStatus = () => {}, timeoutMs = 90000 } = {}) {
+const errorText = (e) => e?.message ?? String(e);
+
+// Reconnecting to a known scale can hang while it is asleep (iOS waits for the device indefinitely).
+const KNOWN_DEVICE_TIMEOUT_MS = 8000;
+// After a failed reconnection, the next attempt goes straight to the device list.
+let skipKnownDevice = false;
+
+// getDevices() returns the devices this site was already allowed to use (Bluefy can remember them),
+// so the scale can be reconnected without the device list. Not every browser has it.
+async function findKnownScale(onStatus) {
+    if (skipKnownDevice || typeof navigator.bluetooth.getDevices !== 'function') return null;
+    try {
+        const devices = await navigator.bluetooth.getDevices();
+        return devices.find((d) => isVitafitName(d.name)) ?? null;
+    } catch (e) {
+        onStatus(`getDevices failed: ${errorText(e)}`);
+        return null;
+    }
+}
+
+function connectWithTimeout(device, ms) {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => {
+            device.gatt.disconnect();
+            reject(new Error(`no answer in ${ms / 1000} s`));
+        }, ms);
+    });
+    return Promise.race([device.gatt.connect(), timeout]).finally(() => clearTimeout(timer));
+}
+
+// Returns {device, server}: the known scale if it answers, otherwise the one picked in the device list.
+async function connectScale(onStatus) {
+    const known = await findKnownScale(onStatus);
+    if (known) {
+        onStatus('Connecting to the known scale...');
+        try {
+            return { device: known, server: await connectWithTimeout(known, KNOWN_DEVICE_TIMEOUT_MS) };
+        } catch (e) {
+            skipKnownDevice = true;
+            onStatus(`Could not reconnect (${errorText(e)}), opening the device list`);
+        }
+    }
+
     onStatus('Requesting Bluetooth device...');
     const device = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true,
@@ -63,9 +104,16 @@ export async function readVitafit({ onStatus = () => {}, timeoutMs = 90000 } = {
     if (!isVitafitName(device.name)) {
         throw new Error(`"${device.name ?? 'unnamed device'}" is not the scale: pick "${DEVICE_NAME}" in the list`);
     }
-
     onStatus('Connecting...');
     const server = await device.gatt.connect();
+    skipKnownDevice = false;
+    return { device, server };
+}
+
+// Connects, waits for a weighing and resolves with {weight, impedance} (impedance null if not measured,
+// e.g. with socks). onStatus(text) receives progress messages and the raw frames.
+export async function readVitafit({ onStatus = () => {}, timeoutMs = 90000 } = {}) {
+    const { device, server } = await connectScale(onStatus);
     const service = await server.getPrimaryService(SERVICE);
     const notifyChar = await service.getCharacteristic(NOTIFY_CHAR);
     const writeChar = await service.getCharacteristic(WRITE_CHAR);
