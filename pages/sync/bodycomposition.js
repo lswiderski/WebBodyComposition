@@ -230,14 +230,15 @@ export default function BodyComposition() {
 
             if (syncToGarmin) {
 
+                // Field names expected by YAGCC's BodyCompositionRequest (case-insensitive).
                 const garminPayload = {
                     ...payload,
-                    garminEmail,
-                    garminPassword,
-                    garminMfaCode,
-                    garminClientId,
-                    garminAccessToken,
-                    garminTokenSecret
+                    email: garminEmail,
+                    password: garminPassword,
+                    mfaCode: garminMfaCode,
+                    clientId: garminClientId,
+                    accessToken: garminAccessToken,
+                    tokenSecret: garminTokenSecret,
                 };
 
                 await axios
