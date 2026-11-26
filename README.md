@@ -39,8 +39,9 @@ Web Bluetooth needs HTTPS and a compatible browser:
 | Bone mass (kg) | `boneMass` | `BoneMass` (custom) | — |
 | Visceral fat | `visceralFatRating` | `VisceralFat` (custom) | — |
 | Metabolic age | `metabolicAge` | — | — |
+| Basal metabolic rate (kcal) | — | `BMR` (custom) | — |
 
-The scanner also shows muscle (%), protein (%) and basal metabolic rate, which are not uploaded.
+The scanner also shows muscle (%) and protein (%), which are not uploaded. Intervals.icu has a built-in `protein` field, but it is the protein eaten that day (nutrition, in grams), not body protein.
 
 ## Sync targets
 
@@ -57,7 +58,7 @@ The proxy URLs are set with environment variables (see [Configuration](#configur
 
 ### Intervals.icu
 
-The app writes a wellness entry for the current day with your Intervals.icu API key (Settings → Developer Settings). `weight` and `bodyFat` are standard Intervals.icu fields. The other five values go to **custom wellness fields that you have to create once**. If a field does not exist, Intervals.icu ignores that value without any error.
+The app writes a wellness entry for the current day with your Intervals.icu API key (Settings → Developer Settings). `weight` and `bodyFat` are standard Intervals.icu fields. The other six values go to **custom wellness fields that you have to create once**. If a field does not exist, Intervals.icu ignores that value without any error.
 
 #### Creating the custom wellness fields
 
@@ -68,6 +69,7 @@ The app writes a wellness entry for the current day with your Intervals.icu API 
 | Water | `Water` | Numeric | % of body weight |
 | Bone Mass | `BoneMass` | Numeric | kg |
 | Visceral Fat | `VisceralFat` | Numeric | rating (1-60) |
+| BMR | `BMR` | Numeric | kcal/day (basal metabolic rate) |
 
 For each field:
 
@@ -85,7 +87,7 @@ For each field:
 
 If someone has already shared a field with the same code (the search button in **Fields** finds shared fields), you can add that one instead: two fields with the same code are the same field. Do not change a code once the field has data.
 
-To check that everything works, submit a weighing from this app and open that day's wellness dialog in Intervals.icu: the five values should appear next to the weight and body fat.
+To check that everything works, submit a weighing from this app and open that day's wellness dialog in Intervals.icu: the six values should appear next to the weight and body fat.
 
 > These steps follow the Intervals.icu forum announcement of custom wellness fields (November 2022). The interface may have changed since; the important part is the **code**.
 
