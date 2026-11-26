@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import axios from 'axios';
 import useLocalStorageState from 'use-local-storage-state'
@@ -109,6 +109,10 @@ export default function BodyComposition() {
     }
 
     const anySyncTarget = syncToGarmin || syncToIntervals || syncToAppleHealth;
+    // Text shown in the Sync Data button while uploading (null when idle).
+    const [syncStatus, setSyncStatus] = useState(null);
+    // Blocks a second submit before the disabled button is re-rendered (e.g. a quick double tap).
+    const syncing = useRef(false);
 
     const preapareApiRequest = () => {
         const payload =
@@ -169,6 +173,9 @@ export default function BodyComposition() {
 
     const submitForm = async (event) => {
         event.preventDefault();
+        if (syncing.current) return;
+        syncing.current = true;
+        setSyncStatus('Syncing...');
 
         const payload = preapareApiRequest();
         try {
@@ -180,6 +187,7 @@ export default function BodyComposition() {
             };
 
             if (syncToIntervals) {
+                setSyncStatus('Uploading to Intervals...');
                 const base64Encoded = btoa(`API_KEY:${intervalsApiKey}`);
                 const intervalsAxiosConfig = {
                     headers: {
@@ -229,6 +237,7 @@ export default function BodyComposition() {
             }
 
             if (syncToGarmin) {
+                setSyncStatus('Uploading to Garmin...');
 
                 // Field names expected by YAGCC's BodyCompositionRequest (case-insensitive).
                 const garminPayload = {
@@ -277,6 +286,7 @@ export default function BodyComposition() {
 
             // last, because opening the shortcut leaves the browser
             if (syncToAppleHealth) {
+                setSyncStatus('Opening Apple Health...');
                 window.location.href = appleHealthShortcutUrl({
                     weightKg: payload.weight,
                     bmi: payload.bodyMassIndex,
@@ -288,6 +298,10 @@ export default function BodyComposition() {
         catch (err) {
             console.log(err);
             alert(`Error: ${err.message}`);
+        }
+        finally {
+            syncing.current = false;
+            setSyncStatus(null);
         }
     };
 
@@ -608,10 +622,17 @@ export default function BodyComposition() {
                             </Link>
                             <button
                                 type="submit"
-                                disabled={!anySyncTarget}
+                                disabled={!anySyncTarget || syncStatus !== null}
                                 title={anySyncTarget ? undefined : 'Select at least one service'}
-                                className='bg-blue-500 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded mt-5 ml-auto'
-                            > Sync Data
+                                className={`${!anySyncTarget ? 'bg-gray-400 cursor-not-allowed' : syncStatus !== null ? 'bg-blue-700 cursor-wait' : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold py-2 px-4 rounded mt-5 ml-auto inline-flex items-center gap-2`}
+                            >
+                                {syncStatus !== null && (
+                                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                                    </svg>
+                                )}
+                                {syncStatus ?? 'Sync Data'}
                             </button>
                             {syncToGarmin && <div className="block text-justify">
                                 <a href='#' className="underline block mt-5 mb-2 text-center" onClick={generateFitFile}>
