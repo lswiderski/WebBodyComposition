@@ -10,6 +10,6 @@ const endpoint = (base, name, path) => {
 // YAGCC (yet-another-garmin-connect-client): Garmin Connect upload from /sync/bodycomposition.
 export const yagccUploadUrl = () => endpoint(YAGCC_URL, 'NEXT_PUBLIC_YAGCC_URL', '/upload');
 
-// bodycomposition-webapi: Garmin Connect upload from /sync/garmin and ".fit file only" downloads.
+// bodycomposition-webapi: ".fit file only" downloads from /sync/bodycomposition.
 export const bodyCompositionWebApiUploadUrl = () =>
     endpoint(BODYCOMPOSITION_WEBAPI_URL, 'NEXT_PUBLIC_BODYCOMPOSITION_WEBAPI_URL', '/upload');

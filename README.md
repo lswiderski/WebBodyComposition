@@ -54,7 +54,7 @@ Proxy: [YAGCC - Yet Another Garmin Connect Client](https://github.com/lswiderski
 The proxy URLs are set with environment variables (see [Configuration](#configuration)):
 
 - `NEXT_PUBLIC_YAGCC_URL`: YAGCC, used by the sync form (`/sync/bodycomposition`).
-- `NEXT_PUBLIC_BODYCOMPOSITION_WEBAPI_URL`: the older [bodycomposition-webapi](https://github.com/lswiderski/bodycomposition-webapi) proxy, used by `/sync/garmin` and by the ".fit file only" download link.
+- `NEXT_PUBLIC_BODYCOMPOSITION_WEBAPI_URL`: the older [bodycomposition-webapi](https://github.com/lswiderski/bodycomposition-webapi) proxy, used by the ".fit file only" download link.
 
 ### Intervals.icu
 
@@ -123,7 +123,7 @@ If Garmin Connect is also connected to Apple Health, weight and body fat may be 
 | Variable | Used for |
 |---|---|
 | `NEXT_PUBLIC_YAGCC_URL` | Garmin Connect upload from the sync form (YAGCC proxy base URL) |
-| `NEXT_PUBLIC_BODYCOMPOSITION_WEBAPI_URL` | Garmin upload from `/sync/garmin` and ".fit file only" downloads (bodycomposition-webapi base URL) |
+| `NEXT_PUBLIC_BODYCOMPOSITION_WEBAPI_URL` | ".fit file only" downloads (bodycomposition-webapi base URL) |
 
 Use base URLs, without the trailing `/upload`. Next.js embeds `NEXT_PUBLIC_*` variables in the browser code **at build time**: set them before building, and rebuild after changing them. If a variable is missing, the corresponding action shows "… is not configured". Intervals.icu needs no configuration.
 
@@ -138,7 +138,7 @@ The app is a Next.js project with no server-side code of its own. Garmin sync ne
 Render can host both the web app and the YAGCC Docker container, so everything lives on one platform.
 
 1. **Garmin proxy:** new *Web Service* from the YAGCC repository, runtime *Docker*. Note its URL.
-2. **Web app:** new *Web Service* from this repository, build command `npm ci && npm run build`, start command `npm start`. Under *Environment*, set `NEXT_PUBLIC_YAGCC_URL` to the proxy URL from step 1 (and `NEXT_PUBLIC_BODYCOMPOSITION_WEBAPI_URL` if you use `/sync/garmin`).
+2. **Web app:** new *Web Service* from this repository, build command `npm ci && npm run build`, start command `npm start`. Under *Environment*, set `NEXT_PUBLIC_YAGCC_URL` to the proxy URL from step 1 (and `NEXT_PUBLIC_BODYCOMPOSITION_WEBAPI_URL` if you use the ".fit file only" download).
 
 ### Vercel
 
